@@ -8,7 +8,7 @@
  * Tested up to:      6.9
  * Requires PHP:      7.4
  * Author:            Tamzid Ahmed
- * Author URI:        https://github.com/tamzid958/SEOAutowrite-Pro
+ * Author URI:        https://github.com/tamzid958
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       seoautowrite-pro
