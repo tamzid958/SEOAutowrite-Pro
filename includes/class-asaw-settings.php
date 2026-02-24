@@ -21,6 +21,7 @@ class ASAW_Settings {
 
 	public function init() {
 		add_action( 'admin_menu',                  array( $this, 'add_menu' ) );
+		add_action( 'admin_head',                  array( $this, 'output_menu_icon_css' ) );
 		add_action( 'admin_init',                  array( $this, 'register_settings' ) );
 		add_action( 'admin_enqueue_scripts',       array( $this, 'enqueue_assets' ) );
 		add_action( 'wp_ajax_asaw_run_now',        array( $this, 'ajax_run_now' ) );
@@ -33,13 +34,15 @@ class ASAW_Settings {
 	// -------------------------------------------------------------------------
 
 	public function add_menu() {
+		$menu_icon = ASAW_PLUGIN_URL . 'assets/logo.png';
+
 		add_menu_page(
 			__( 'SEOAutowrite Pro', 'seoautowrite-pro' ),
 			__( 'SEOAutowrite', 'seoautowrite-pro' ),
 			'manage_options',
 			self::MENU_SLUG,
 			array( $this, 'render_settings_page' ),
-			'dashicons-edit-page',
+			$menu_icon,
 			5
 		);
 	}
@@ -58,6 +61,22 @@ class ASAW_Settings {
 		);
 		array_unshift( $links, $manage_link );
 		return $links;
+	}
+
+	/**
+	 * Keep the custom top-level menu logo at standard WordPress menu icon size.
+	 */
+	public function output_menu_icon_css() {
+		?>
+		<style>
+			#adminmenu .toplevel_page_<?php echo esc_attr( self::MENU_SLUG ); ?> .wp-menu-image img {
+				width: 20px;
+				height: 20px;
+				padding-top: 7px;
+				object-fit: contain;
+			}
+		</style>
+		<?php
 	}
 
 	// -------------------------------------------------------------------------
@@ -129,6 +148,9 @@ class ASAW_Settings {
 		// Logging.
 		$out['logging_level'] = in_array( $input['logging_level'] ?? '', array( 'error', 'info', 'debug' ), true )
 			? $input['logging_level'] : 'info';
+
+		// Custom prompt.
+		$out['custom_prompt'] = sanitize_textarea_field( $input['custom_prompt'] ?? '' );
 
 		// Reschedule the cron using the NEW (not yet saved) options.
 		$cron = new ASAW_Cron();
@@ -241,7 +263,10 @@ class ASAW_Settings {
 
 		?>
 		<div class="wrap asaw-settings">
-			<h1><?php esc_html_e( 'SEOAutowrite Pro', 'seoautowrite-pro' ); ?></h1>
+			<h1 class="asaw-settings-title">
+				<img src="<?php echo esc_url( ASAW_PLUGIN_URL . 'assets/logo.png' ); ?>" alt="<?php esc_attr_e( 'SEOAutowrite Pro Logo', 'seoautowrite-pro' ); ?>" class="asaw-settings-logo">
+				<?php esc_html_e( 'SEOAutowrite Pro', 'seoautowrite-pro' ); ?>
+			</h1>
 			<?php settings_errors( self::SETTINGS_GROUP ); ?>
 
 			<form method="post" action="options.php">
@@ -540,7 +565,33 @@ class ASAW_Settings {
 					</tr>
 				</table>
 
-				<?php submit_button( __( 'Save Settings', 'seoautowrite-pro' ) ); ?>
+				<!-- ===================== CUSTOM PROMPT ===================== -->
+				<h2 class="title"><?php esc_html_e( 'Custom Prompt', 'seoautowrite-pro' ); ?></h2>
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><label for="asaw-custom-prompt"><?php esc_html_e( 'Prompt Template', 'seoautowrite-pro' ); ?></label></th>
+						<td>
+							<textarea id="asaw-custom-prompt" name="<?php echo esc_attr( $opt_name ); ?>[custom_prompt]"
+								rows="20" class="large-text code"
+								style="font-family:monospace;white-space:pre;"
+							><?php echo esc_textarea( $opts['custom_prompt'] ); ?></textarea>
+							<p class="description">
+								<?php esc_html_e( 'Leave blank to use the built-in prompt. Write your own prompt and use these placeholders — they are replaced automatically at generation time:', 'seoautowrite-pro' ); ?>
+								<br><code>{category_name}</code> &mdash; <?php esc_html_e( 'category name', 'seoautowrite-pro' ); ?><br>
+								<code>{category_description}</code> &mdash; <?php esc_html_e( 'category description', 'seoautowrite-pro' ); ?><br>
+								<code>{min_words}</code> &mdash; <?php esc_html_e( 'minimum word count', 'seoautowrite-pro' ); ?><br>
+								<code>{max_words}</code> &mdash; <?php esc_html_e( 'maximum word count', 'seoautowrite-pro' ); ?><br>
+								<code>{tone}</code> &mdash; <?php esc_html_e( 'writing tone', 'seoautowrite-pro' ); ?><br>
+								<code>{language}</code> &mdash; <?php esc_html_e( 'language code (e.g. en)', 'seoautowrite-pro' ); ?><br>
+								<code>{faq_line}</code> &mdash; <?php esc_html_e( 'FAQ instruction (based on Include FAQ setting)', 'seoautowrite-pro' ); ?><br>
+								<code>{schema}</code> &mdash; <?php esc_html_e( 'required JSON output schema', 'seoautowrite-pro' ); ?><br>
+								<code>{existing_content}</code> &mdash; <?php esc_html_e( 'recent titles block (for deduplication)', 'seoautowrite-pro' ); ?>
+							</p>
+						</td>
+					</tr>
+				</table>
+
+			<?php submit_button( __( 'Save Settings', 'seoautowrite-pro' ) ); ?>
 			</form>
 
 			<!-- ===================== MANUAL RUN ===================== -->

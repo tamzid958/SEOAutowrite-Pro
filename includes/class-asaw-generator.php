@@ -316,43 +316,6 @@ class ASAW_Generator {
 			$html .= '</ul>';
 		}
 
-		if ( ! empty( $brief['target_site_types'] ) ) {
-			$html .= '<h3>' . esc_html__( 'Target Site Types', 'seoautowrite-pro' ) . '</h3><ul>';
-			foreach ( (array) $brief['target_site_types'] as $item ) {
-				$html .= '<li>' . esc_html( $item ) . '</li>';
-			}
-			$html .= '</ul>';
-		}
-
-		if ( ! empty( $brief['anchor_text_ideas'] ) ) {
-			$html .= '<h3>' . esc_html__( 'Anchor Text Ideas', 'seoautowrite-pro' ) . '</h3><ul>';
-			foreach ( (array) $brief['anchor_text_ideas'] as $item ) {
-				$html .= '<li>' . esc_html( $item ) . '</li>';
-			}
-			$html .= '</ul>';
-		}
-
-		if ( ! empty( $brief['outreach_email_drafts'] ) ) {
-			$html .= '<h3>' . esc_html__( 'Outreach Email Drafts', 'seoautowrite-pro' ) . '</h3>';
-			foreach ( (array) $brief['outreach_email_drafts'] as $draft ) {
-				if ( ! is_array( $draft ) ) {
-					continue;
-				}
-				$type    = sanitize_text_field( $draft['type']    ?? '' );
-				$subject = sanitize_text_field( $draft['subject'] ?? '' );
-				$body    = sanitize_textarea_field( $draft['body'] ?? '' );
-				if ( $subject ) {
-					$html .= '<h4>' . esc_html( $subject ) . '</h4>';
-				}
-				if ( $type ) {
-					$html .= '<p><em>' . esc_html( $type ) . '</em></p>';
-				}
-				if ( $body ) {
-					$html .= '<pre>' . esc_html( $body ) . '</pre>';
-				}
-			}
-		}
-
 		return $html;
 	}
 

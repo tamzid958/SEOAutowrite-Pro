@@ -297,7 +297,7 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 		}
 
 		// Handle leading/trailing text around the JSON object.
-		if ( preg_match( '/\{[\s\S]*\}/U', $raw, $matches ) ) {
+		if ( preg_match( '/\{[\s\S]*\}/', $raw, $matches ) ) {
 			$data = json_decode( $matches[0], true );
 			if ( is_array( $data ) ) {
 				return $data;

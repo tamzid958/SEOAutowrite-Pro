@@ -25,6 +25,20 @@ define( 'ASAW_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ASAW_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'ASAW_TEXT_DOMAIN', 'seoautowrite-pro' );
 
+// Enable WordPress auto-updates for this plugin by default.
+add_filter(
+	'auto_update_plugin',
+	function ( $update, $item ) {
+		if ( isset( $item->plugin ) && plugin_basename( ASAW_PLUGIN_FILE ) === $item->plugin ) {
+			return true;
+		}
+
+		return $update;
+	},
+	10,
+	2
+);
+
 // Load all classes.
 require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-logger.php';
 require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-utils.php';

@@ -70,25 +70,40 @@ class ASAW_Utils {
     }
   ],
   "backlink_brief": {
-    "linkable_angles": ["string"],
-    "target_site_types": ["string"],
-    "anchor_text_ideas": ["string"],
-    "outreach_email_drafts": [
-      {
-        "type": "value_pitch",
-        "subject": "string",
-        "body": "string"
-      },
-      {
-        "type": "broken_link_pitch",
-        "subject": "string",
-        "body": "string"
-      }
-    ]
+    "linkable_angles": ["string"]
   },
   "featured_image_prompt": "string"
 }
 JSON;
+
+		// If the user has provided a custom prompt template, use it with placeholder substitution.
+		if ( ! empty( $options['custom_prompt'] ) ) {
+			return str_replace(
+				array(
+					'{category_name}',
+					'{category_description}',
+					'{min_words}',
+					'{max_words}',
+					'{tone}',
+					'{language}',
+					'{faq_line}',
+					'{schema}',
+					'{existing_content}',
+				),
+				array(
+					$category_name,
+					$category_description,
+					$min_words,
+					$max_words,
+					$tone,
+					$language,
+					$faq_line,
+					$schema,
+					$existing_content,
+				),
+				$options['custom_prompt']
+			);
+		}
 
 		return <<<PROMPT
 You are an elite SEO content strategist, conversion-focused blog writer, and authority backlink specialist.
@@ -162,9 +177,6 @@ Word count of content_html: between {$min_words} and {$max_words} words
 
 Provide:
 - 5 linkable angles (data-driven, guide, comparison, statistics, expert quotes, etc.)
-- Target site types (blogs, SaaS, media, niche sites, resource pages, etc.)
-- Suggested anchor text variations (natural mix)
-- Exactly 2 personalized outreach email drafts: one value-driven pitch and one broken-link replacement pitch
 
 === FEATURED IMAGE ===
 
@@ -228,7 +240,7 @@ PROMPT;
 			return new WP_Error( 'invalid_backlink_brief', 'backlink_brief must be an object/array.' );
 		}
 
-		foreach ( array( 'linkable_angles', 'target_site_types', 'anchor_text_ideas', 'outreach_email_drafts' ) as $k ) {
+		foreach ( array( 'linkable_angles' ) as $k ) {
 			if ( ! array_key_exists( $k, $data['backlink_brief'] ) ) {
 				return new WP_Error( 'missing_backlink_key', "Missing backlink_brief key: {$k}" );
 			}
@@ -248,7 +260,7 @@ PROMPT;
 			'ollama_endpoint'                => 'https://ollama.com/api/generate',
 			'ollama_api_key'                 => '',
 			'ollama_model'                   => 'gpt-oss:120b',
-			'ollama_timeout_seconds'         => 60,
+			'ollama_timeout_seconds'         => 600,
 			// General
 			'enabled'                        => false,
 			'on_invalid_json'                => 'abort',
@@ -277,6 +289,8 @@ PROMPT;
 			'image_model'                    => 'dall-e-3',
 			// Logging
 			'logging_level'                  => 'info',
+			// Custom prompt
+			'custom_prompt'                  => '',
 		);
 	}
 }

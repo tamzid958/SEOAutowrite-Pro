@@ -5,6 +5,18 @@
 	margin-bottom: 20px;
 }
 
+.asaw-settings .asaw-settings-title {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.asaw-settings .asaw-settings-logo {
+	width: 32px;
+	height: 32px;
+	object-fit: contain;
+}
+
 .asaw-settings h2.title {
 	border-bottom: 1px solid #dcdcde;
 	padding-bottom: 10px;
