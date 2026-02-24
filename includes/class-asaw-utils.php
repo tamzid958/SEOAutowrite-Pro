@@ -17,12 +17,13 @@ class ASAW_Utils {
 	 * @param array  $options
 	 * @return string
 	 */
-	public static function build_prompt( $category_name, $category_description, array $options, array $recent_titles = array() ) {
+	public static function build_prompt( $category_name, $category_description, array $options, array $recent_titles = array(), $selected_topic = '' ) {
 		$min_words   = max( 100, intval( $options['min_words']   ?? 800 ) );
 		$max_words   = max( $min_words, intval( $options['max_words'] ?? 1500 ) );
 		$tone        = sanitize_text_field( $options['tone']     ?? 'professional' );
 		$language    = sanitize_text_field( $options['language'] ?? 'en' );
 		$include_faq = ! empty( $options['include_faq'] );
+		$selected_topic = sanitize_text_field( $selected_topic );
 
 		$faq_line = $include_faq
 			? 'Include a "Frequently Asked Questions" section: wrap it in <section class="faq">, use an <h2>Frequently Asked Questions</h2> heading, then for each item use <h3> for the question and <p> for the answer. Include at least 4 questions.'
@@ -78,10 +79,12 @@ JSON;
 
 		// If the user has provided a custom prompt template, use it with placeholder substitution.
 		if ( ! empty( $options['custom_prompt'] ) ) {
-			return str_replace(
+			$custom_prompt = str_replace(
 				array(
 					'{category_name}',
 					'{category_description}',
+					'{selected_topic}',
+					'{category_topic_focus}',
 					'{min_words}',
 					'{max_words}',
 					'{tone}',
@@ -93,6 +96,8 @@ JSON;
 				array(
 					$category_name,
 					$category_description,
+					$selected_topic,
+					$selected_topic,
 					$min_words,
 					$max_words,
 					$tone,
@@ -103,6 +108,14 @@ JSON;
 				),
 				$options['custom_prompt']
 			);
+
+			$custom_prompt .= "\n\n=== HARD REQUIREMENTS (SYSTEM ENFORCED) ===\n";
+			$custom_prompt .= "- Topic must be specific and concrete.\n";
+			$custom_prompt .= "- Use this selected topic as the article core: {$selected_topic}\n";
+			$custom_prompt .= "- Do NOT include an <h1> inside content_html.\n";
+			$custom_prompt .= "- Avoid generic category-wide articles.\n";
+
+			return $custom_prompt;
 		}
 
 		return <<<PROMPT
@@ -114,13 +127,15 @@ Write a high-quality, original, search-intent-aligned blog article for the follo
 
 Category name: {$category_name}
 Category description: {$category_description}
+Selected specific topic: {$selected_topic}
 
 {$existing_content}
 Before writing, infer:
 
 - Primary search intent (informational, commercial, transactional, navigational)
 - Primary keyword (based on category intent)
-- 5–10 semantically related keywords (LSI / entity-based terms)
+- 5-10 semantically related keywords (LSI / entity-based terms)
+- A concrete and narrow article angle for the selected topic above
 
 Naturally incorporate them throughout headings and body without keyword stuffing.
 
@@ -134,11 +149,13 @@ Word count of content_html: between {$min_words} and {$max_words} words
 - Provide accurate, specific, actionable information
 - Use examples, data points, frameworks, or step-by-step guidance when relevant
 - Optimize for featured snippets where applicable (definitions, bullet steps, concise explanations)
+- Write about the selected specific topic: "{$selected_topic}"
+- Use concrete tools/platform/version details and practical tradeoffs where relevant
 
 === HTML STRUCTURE & FORMATTING ===
 
-- Place exactly one <h1> tag at the very top of content_html containing the article title (include primary keyword naturally)
-- Immediately after the <h1>, write an engaging 2–3 sentence introduction wrapped in a <p> tag — no heading before it
+- Do NOT include an <h1> in content_html (WordPress post_title already renders the title)
+- Start with an engaging 2-3 sentence introduction wrapped in a <p> tag - no heading before it
 - Divide the body into logical sections, each introduced with an <h2> (include related keywords naturally)
 - Use <h3> for sub-points within sections
 - Wrap every paragraph in <p> tags — never output bare text outside a tag
@@ -155,7 +172,7 @@ Word count of content_html: between {$min_words} and {$max_words} words
 === SEO OPTIMIZATION RULES ===
 
 - Maintain natural keyword density (avoid stuffing)
-- Include the primary keyword in: <h1>, first 100 words, at least one <h2>, and the Conclusion
+- Include the primary keyword in: first 100 words, at least one <h2>, and the Conclusion
 - Use semantic variations throughout
 - Add short, direct definitions where helpful (for snippet eligibility)
 - Ensure readability for Grade 6–9 level
@@ -194,6 +211,52 @@ No text before or after the JSON.
 The JSON must exactly match this structure:
 
 {$schema}
+PROMPT;
+	}
+
+	/**
+	 * Build a prompt for selecting one specific, non-generic topic in a category.
+	 *
+	 * @param string   $category_name
+	 * @param string   $category_description
+	 * @param string[] $recent_titles
+	 * @param string   $language
+	 * @return string
+	 */
+	public static function build_topic_selection_prompt( $category_name, $category_description, array $recent_titles = array(), $language = 'en' ) {
+		$language = sanitize_text_field( $language ?: 'en' );
+
+		if ( ! empty( $recent_titles ) ) {
+			$titles_list      = implode( "\n", array_map( static function ( $t ) {
+				return '- ' . $t;
+			}, $recent_titles ) );
+			$existing_content = "Existing titles (avoid overlap):\n{$titles_list}\n";
+		} else {
+			$existing_content = '';
+		}
+
+		return <<<PROMPT
+You are a senior content strategist.
+
+Pick one highly specific blog topic for this category.
+Category name: {$category_name}
+Category description: {$category_description}
+Language: {$language}
+
+{$existing_content}
+Rules:
+- Choose one narrow, concrete topic (not a broad generic category overview).
+- Topic must be actionable and have clear search intent.
+- Avoid topics that overlap existing titles.
+- Prefer specific platform/tool/version use-cases when relevant.
+
+Return ONLY valid JSON:
+{
+  "selected_topic": "string",
+  "primary_keyword": "string",
+  "search_intent": "informational|commercial|transactional|navigational",
+  "why_this_topic": "string"
+}
 PROMPT;
 	}
 

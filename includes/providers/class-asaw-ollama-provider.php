@@ -36,8 +36,6 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 		$category_name        = $payload['category_name']        ?? '';
 		$category_description = $payload['category_description'] ?? '';
 		$recent_titles        = $payload['recent_titles']        ?? array();
-
-		$prompt = ASAW_Utils::build_prompt( $category_name, $category_description, $this->options, $recent_titles );
 		$models = $this->build_model_queue();
 
 		if ( empty( $models ) ) {
@@ -47,6 +45,30 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 		$last_error = new WP_Error( 'no_models', __( 'No Ollama models are available.', 'seoautowrite-pro' ) );
 
 		foreach ( $models as $model ) {
+			$selected_topic = $this->choose_specific_topic_with_model(
+				$model,
+				$category_name,
+				$category_description,
+				$recent_titles
+			);
+
+			if ( is_wp_error( $selected_topic ) ) {
+				$last_error = $selected_topic;
+				ASAW_Logger::info(
+					"Model {$model} failed during topic selection; trying next fallback.",
+					array( 'reason' => $selected_topic->get_error_message() )
+				);
+				continue;
+			}
+
+			$prompt = ASAW_Utils::build_prompt(
+				$category_name,
+				$category_description,
+				$this->options,
+				$recent_titles,
+				$selected_topic
+			);
+
 			$result = $this->try_generate_with_model( $prompt, $model );
 
 			if ( ! is_wp_error( $result ) ) {
@@ -63,6 +85,47 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 
 		ASAW_Logger::error( 'All models failed.', array( 'last_error' => $last_error->get_error_message() ) );
 		return $last_error;
+	}
+
+	/**
+	 * Ask Ollama to pick one specific topic before full article generation.
+	 *
+	 * @param string   $model
+	 * @param string   $category_name
+	 * @param string   $category_description
+	 * @param string[] $recent_titles
+	 * @return string|WP_Error
+	 */
+	private function choose_specific_topic_with_model( $model, $category_name, $category_description, array $recent_titles ) {
+		$language     = sanitize_text_field( $this->options['language'] ?? 'en' );
+		$topic_prompt = ASAW_Utils::build_topic_selection_prompt(
+			$category_name,
+			$category_description,
+			$recent_titles,
+			$language
+		);
+
+		$raw = $this->call_ollama_raw( $topic_prompt, $model );
+		if ( is_wp_error( $raw ) ) {
+			return $raw;
+		}
+
+		$data = $this->parse_model_output( $raw );
+		if ( ! is_array( $data ) || empty( $data['selected_topic'] ) ) {
+			return new WP_Error( 'topic_selection_failed', __( 'Could not select a specific topic from Ollama output.', 'seoautowrite-pro' ) );
+		}
+
+		$selected_topic = sanitize_text_field( $data['selected_topic'] );
+		if ( '' === $selected_topic ) {
+			return new WP_Error( 'topic_selection_empty', __( 'Selected topic was empty.', 'seoautowrite-pro' ) );
+		}
+
+		ASAW_Logger::info( 'Selected specific topic for article generation.', array(
+			'model' => $model,
+			'topic' => $selected_topic,
+		) );
+
+		return $selected_topic;
 	}
 
 	/**

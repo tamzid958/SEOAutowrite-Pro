@@ -215,6 +215,7 @@ class ASAW_Generator {
 		$slug    = sanitize_title( $article['slug']         ?? $title );
 		$excerpt = wp_kses_post( $article['excerpt']        ?? '' );
 		$content = wp_kses_post( $article['content_html']   ?? '' );
+		$content = $this->normalize_content_html( $content, $title );
 
 		// Optionally append backlink brief to content.
 		if ( ! empty( $this->options['include_backlink_brief_in_post'] ) && ! empty( $article['backlink_brief'] ) ) {
@@ -237,6 +238,35 @@ class ASAW_Generator {
 		);
 
 		return wp_insert_post( $post_data, true );
+	}
+
+	/**
+	 * Remove duplicated top title markers from generated HTML body.
+	 *
+	 * @param string $content
+	 * @param string $title
+	 * @return string
+	 */
+	private function normalize_content_html( $content, $title ) {
+		$content = trim( (string) $content );
+		$title   = trim( (string) $title );
+
+		if ( '' === $content || '' === $title ) {
+			return $content;
+		}
+
+		$quoted_title = preg_quote( $title, '/' );
+
+		// Remove a leading heading that duplicates post title.
+		$content = preg_replace( '/^\s*<h[1-2][^>]*>\s*' . $quoted_title . '\s*<\/h[1-2]>\s*/iu', '', $content, 1 );
+
+		// Remove a leading paragraph that only repeats the title.
+		$content = preg_replace( '/^\s*<p[^>]*>\s*' . $quoted_title . '\s*<\/p>\s*/iu', '', $content, 1 );
+
+		// Remove a raw leading text line that repeats title.
+		$content = preg_replace( '/^\s*' . $quoted_title . '\s*/iu', '', $content, 1 );
+
+		return ltrim( $content );
 	}
 
 	/**

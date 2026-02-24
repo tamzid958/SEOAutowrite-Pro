@@ -596,6 +596,7 @@ class ASAW_Settings {
 								<?php esc_html_e( 'Leave blank to use the built-in prompt. Write your own prompt and use these placeholders — they are replaced automatically at generation time:', 'seoautowrite-pro' ); ?>
 								<br><code>{category_name}</code> &mdash; <?php esc_html_e( 'category name', 'seoautowrite-pro' ); ?><br>
 								<code>{category_description}</code> &mdash; <?php esc_html_e( 'category description', 'seoautowrite-pro' ); ?><br>
+								<code>{selected_topic}</code> &mdash; <?php esc_html_e( 'specific topic selected by Ollama before article writing', 'seoautowrite-pro' ); ?><br>
 								<code>{min_words}</code> &mdash; <?php esc_html_e( 'minimum word count', 'seoautowrite-pro' ); ?><br>
 								<code>{max_words}</code> &mdash; <?php esc_html_e( 'maximum word count', 'seoautowrite-pro' ); ?><br>
 								<code>{tone}</code> &mdash; <?php esc_html_e( 'writing tone', 'seoautowrite-pro' ); ?><br>
