@@ -4,7 +4,7 @@ Tags:              ai, seo, content, article writer, ollama, scheduled posts, au
 Requires at least: 6.0
 Tested up to:      6.9
 Requires PHP:      7.4
-Stable tag:        1.0.0
+Stable tag:        1.0.1
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,12 @@ Yes. The plugin automatically writes meta title, meta description, and focus key
 
 == Changelog ==
 
+= 1.0.1 =
+* Fix: cron not scheduling on activation when custom frequency was selected.
+* Fix: category rotation now tracks by category ID instead of index, preventing wrong category selection after category list changes.
+* Fix: "Next Scheduled Run" now displays in the correct WordPress timezone using wp_date().
+* Fix: removed redundant cron reschedule call from sanitize_options to prevent double scheduling on settings save.
+
 = 1.0.0 =
 * Initial release.
 * Ollama text generation with model fallback queue.
@@ -92,6 +98,9 @@ Yes. The plugin automatically writes meta title, meta description, and focus key
 * Internal and external link suggestions stored as post meta.
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+Bug fix release. Deactivate and reactivate the plugin after updating to ensure the cron event is rescheduled correctly.
 
 = 1.0.0 =
 Initial release — no upgrade steps required.

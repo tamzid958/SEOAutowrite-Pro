@@ -152,10 +152,6 @@ class ASAW_Settings {
 		// Custom prompt.
 		$out['custom_prompt'] = sanitize_textarea_field( $input['custom_prompt'] ?? '' );
 
-		// Reschedule the cron using the NEW (not yet saved) options.
-		$cron = new ASAW_Cron();
-		$cron->schedule( $out );
-
 		return $out;
 	}
 
@@ -381,7 +377,7 @@ class ASAW_Settings {
 								<strong>
 									<?php
 									if ( $next_run ) {
-										echo esc_html( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next_run ) );
+										echo esc_html( wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next_run ) );
 									} else {
 										esc_html_e( 'Not scheduled', 'seoautowrite-pro' );
 									}

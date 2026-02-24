@@ -175,12 +175,14 @@ class ASAW_Generator {
 			return $categories[ array_rand( $categories ) ];
 		}
 
-		// Rotate: cycle through categories in order.
-		$last_index = intval( get_option( 'asaw_last_category_index', -1 ) );
-		$next_index = ( $last_index + 1 ) % count( $categories );
-		update_option( 'asaw_last_category_index', $next_index, false );
+		// Rotate: cycle through categories in order using stored category ID.
+		$last_cat_id  = intval( get_option( 'asaw_last_category_id', 0 ) );
+		$last_index   = array_search( $last_cat_id, $categories, true );
+		$next_index   = ( false === $last_index ) ? 0 : ( $last_index + 1 ) % count( $categories );
+		$next_cat_id  = $categories[ $next_index ];
+		update_option( 'asaw_last_category_id', $next_cat_id, false );
 
-		return $categories[ $next_index ];
+		return $next_cat_id;
 	}
 
 	/**

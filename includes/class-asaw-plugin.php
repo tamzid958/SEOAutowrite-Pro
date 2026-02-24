@@ -57,6 +57,7 @@ class ASAW_Plugin {
 	 */
 	public static function activate() {
 		$cron = new ASAW_Cron();
+		$cron->init();
 		$cron->schedule();
 	}
 
