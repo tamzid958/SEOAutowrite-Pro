@@ -38,8 +38,7 @@ class ASAW_Utils {
 			$existing_content = '';
 		}
 
-		$schema = <<<'JSON'
-{
+		$schema = '{
   "title": "string",
   "meta_title": "string (max 60 characters, includes primary keyword)",
   "slug": "string (URL-friendly, lowercase, hyphens only)",
@@ -74,8 +73,7 @@ class ASAW_Utils {
     "linkable_angles": ["string"]
   },
   "featured_image_prompt": "string"
-}
-JSON;
+}';
 
 		// If the user has provided a custom prompt template, use it with placeholder substitution.
 		if ( ! empty( $options['custom_prompt'] ) ) {
@@ -118,8 +116,7 @@ JSON;
 			return $custom_prompt;
 		}
 
-		return <<<PROMPT
-You are an elite SEO content strategist, conversion-focused blog writer, and authority backlink specialist.
+		return "You are an elite SEO content strategist, conversion-focused blog writer, and authority backlink specialist.
 
 Your goal is to create a blog post that is structurally, semantically, and strategically optimized to rank #1 on Google for its primary topic while remaining natural, helpful, and authoritative.
 
@@ -149,7 +146,7 @@ Word count of content_html: between {$min_words} and {$max_words} words
 - Provide accurate, specific, actionable information
 - Use examples, data points, frameworks, or step-by-step guidance when relevant
 - Optimize for featured snippets where applicable (definitions, bullet steps, concise explanations)
-- Write about the selected specific topic: "{$selected_topic}"
+- Write about the selected specific topic: \"{$selected_topic}\"
 - Use concrete tools/platform/version details and practical tradeoffs where relevant
 
 === HTML STRUCTURE & FORMATTING ===
@@ -210,8 +207,7 @@ No text before or after the JSON.
 
 The JSON must exactly match this structure:
 
-{$schema}
-PROMPT;
+{$schema}";
 	}
 
 	/**
@@ -235,8 +231,7 @@ PROMPT;
 			$existing_content = '';
 		}
 
-		return <<<PROMPT
-You are a senior content strategist.
+		return "You are a senior content strategist.
 
 Pick one highly specific blog topic for this category.
 Category name: {$category_name}
@@ -252,12 +247,11 @@ Rules:
 
 Return ONLY valid JSON:
 {
-  "selected_topic": "string",
-  "primary_keyword": "string",
-  "search_intent": "informational|commercial|transactional|navigational",
-  "why_this_topic": "string"
-}
-PROMPT;
+  \"selected_topic\": \"string\",
+  \"primary_keyword\": \"string\",
+  \"search_intent\": \"informational|commercial|transactional|navigational\",
+  \"why_this_topic\": \"string\"
+}";
 	}
 
 	/**
@@ -267,15 +261,13 @@ PROMPT;
 	 * @return string
 	 */
 	public static function repair_prompt( $raw_output ) {
-		return <<<PROMPT
-		The text below was supposed to be a valid JSON object matching a specific schema but it is malformed or incomplete.
+		return "The text below was supposed to be a valid JSON object matching a specific schema but it is malformed or incomplete.
 
-		Fix it and return ONLY the corrected, complete, valid JSON object. No markdown, no code fences, no commentary outside the JSON.
+Fix it and return ONLY the corrected, complete, valid JSON object. No markdown, no code fences, no commentary outside the JSON.
 
-		--- BEGIN BROKEN OUTPUT ---
-		{$raw_output}
-		--- END BROKEN OUTPUT ---
-PROMPT;
+--- BEGIN BROKEN OUTPUT ---
+{$raw_output}
+--- END BROKEN OUTPUT ---";
 	}
 
 	/**

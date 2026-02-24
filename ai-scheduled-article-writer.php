@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name:       SEOAutowrite Pro
- * Plugin URI:        https://github.com/your-username/seoautowrite-pro
+ * Plugin URI:        https://github.com/tamzid958/SEOAutowrite-Pro
  * Description:       AI-powered WordPress article writer with SEO optimisation, scheduled publishing, backlink briefs, FAQ schema, and featured image generation via Ollama.
  * Version:           1.0.0
  * Requires at least: 6.0
- * Tested up to:      6.7
+ * Tested up to:      6.9
  * Requires PHP:      7.4
- * Author:            Your Name
- * Author URI:        https://yourwebsite.com
+ * Author:            Tamzid Ahmed
+ * Author URI:        https://github.com/tamzid958/SEOAutowrite-Pro
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       seoautowrite-pro
@@ -24,20 +24,6 @@ define( 'ASAW_PLUGIN_FILE', __FILE__ );
 define( 'ASAW_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ASAW_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'ASAW_TEXT_DOMAIN', 'seoautowrite-pro' );
-
-// Enable WordPress auto-updates for this plugin by default.
-add_filter(
-	'auto_update_plugin',
-	function ( $update, $item ) {
-		if ( isset( $item->plugin ) && plugin_basename( ASAW_PLUGIN_FILE ) === $item->plugin ) {
-			return true;
-		}
-
-		return $update;
-	},
-	10,
-	2
-);
 
 // Load all classes.
 require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-logger.php';
