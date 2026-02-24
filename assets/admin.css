@@ -1,0 +1,80 @@
+/* AI Scheduled Article Writer — Admin Styles */
+
+/* ── Page layout ─────────────────────────────────────────────── */
+.asaw-settings h1 {
+	margin-bottom: 20px;
+}
+
+.asaw-settings h2.title {
+	border-bottom: 1px solid #dcdcde;
+	padding-bottom: 10px;
+	margin-top: 36px;
+}
+
+/* ── Run Now status ──────────────────────────────────────────── */
+#asaw-run-now-status {
+	font-style: italic;
+	vertical-align: middle;
+}
+
+/* ── Logs table ──────────────────────────────────────────────── */
+.asaw-logs-table {
+	margin-top: 12px;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.asaw-logs-table th,
+.asaw-logs-table td {
+	vertical-align: top;
+	padding: 8px 12px;
+}
+
+.asaw-logs-table thead th {
+	background: #f0f0f1;
+	font-weight: 600;
+}
+
+/* Row colouring by level */
+.asaw-log-error {
+	background-color: #fdf2f2;
+}
+
+.asaw-log-info {
+	background-color: #f0f6fc;
+}
+
+.asaw-log-debug {
+	background-color: #f8f8f8;
+}
+
+/* Level badge */
+.asaw-level-badge {
+	display: inline-block;
+	padding: 2px 7px;
+	border-radius: 3px;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	color: #fff;
+	background: #aaa;
+	white-space: nowrap;
+}
+
+.asaw-log-error .asaw-level-badge  { background: #d63638; }
+.asaw-log-info  .asaw-level-badge  { background: #0073aa; }
+.asaw-log-debug .asaw-level-badge  { background: #6c757d; }
+
+/* Context pre block */
+.asaw-context {
+	margin: 6px 0 0;
+	padding: 8px 10px;
+	font-size: 11px;
+	background: rgba(0, 0, 0, 0.04);
+	border-left: 3px solid #dcdcde;
+	border-radius: 2px;
+	white-space: pre-wrap;
+	word-break: break-all;
+	max-height: 200px;
+	overflow-y: auto;
+}
