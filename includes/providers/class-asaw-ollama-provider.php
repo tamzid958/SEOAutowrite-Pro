@@ -230,7 +230,7 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 	private function call_ollama_raw( $prompt, $model ) {
 		$endpoint = esc_url_raw( $this->options['ollama_endpoint'] ?? 'https://ollama.com/api/generate' );
 		$api_key  = sanitize_text_field( $this->options['ollama_api_key'] ?? '' );
-		$timeout  = max( 10, intval( $this->options['ollama_timeout_seconds'] ?? 60 ) );
+		$timeout  = max( 10, intval( $this->options['ollama_timeout_seconds'] ?? 600 ) );
 
 		$body = wp_json_encode( array(
 			'model'  => $model,
