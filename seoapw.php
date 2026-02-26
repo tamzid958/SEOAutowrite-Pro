@@ -29,7 +29,7 @@ define( 'SEOAPW_TEXT_DOMAIN', 'seoautowrite-pro' );
  * Pro API server URL. Override in wp-config.php via:
  *   define( 'SEOAPW_CUSTOM_API_URL', 'https://your-server.com' );
  */
-define( 'SEOAPW_API_URL', defined( 'SEOAPW_CUSTOM_API_URL' ) ? SEOAPW_CUSTOM_API_URL : 'https://api.seoautowrite.pro' );
+define( 'SEOAPW_API_URL', defined( 'SEOAPW_CUSTOM_API_URL' ) ? SEOAPW_CUSTOM_API_URL : 'https://seoautowrite.pro' );
 
 // Load all classes.
 require_once SEOAPW_PLUGIN_DIR . 'includes/class-seoapw-logger.php';

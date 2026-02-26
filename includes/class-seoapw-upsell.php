@@ -29,7 +29,7 @@ class SEOAPW_Upsell {
 			return;
 		}
 
-		$buy_url = SEOAPW_API_URL . '/topup';
+		$buy_url = 'https://seoautowrite.pro/#pricing';
 		?>
 		<div class="seoapw-upsell-banner">
 			<span class="seoapw-upsell-banner__text">
@@ -51,7 +51,7 @@ class SEOAPW_Upsell {
 			return;
 		}
 
-		$buy_url = SEOAPW_API_URL . '/get-started';
+		$buy_url = 'https://seoautowrite.pro/#pricing';
 		?>
 		<div id="seoapw-upgrade-modal" class="seoapw-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="seoapw-modal-title">
 			<div class="seoapw-modal__backdrop"></div>
