@@ -19,11 +19,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ASAW_VERSION', '1.0.1' );
-define( 'ASAW_PLUGIN_FILE', __FILE__ );
-define( 'ASAW_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'ASAW_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'ASAW_TEXT_DOMAIN', 'seoautowrite-pro' );
+define( 'SEOAPW_VERSION', '1.0.1' );
+define( 'SEOAPW_PLUGIN_FILE', __FILE__ );
+define( 'SEOAPW_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'SEOAPW_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'SEOAPW_TEXT_DOMAIN', 'seoautowrite-pro' );
 
 /**
  * Pro API server URL. Override in wp-config.php via:
@@ -32,28 +32,28 @@ define( 'ASAW_TEXT_DOMAIN', 'seoautowrite-pro' );
 define( 'SEOAPW_API_URL', defined( 'SEOAPW_CUSTOM_API_URL' ) ? SEOAPW_CUSTOM_API_URL : 'https://api.seoautowrite.pro' );
 
 // Load all classes.
-require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-logger.php';
-require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-utils.php';
-require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-provider-interface.php';
-require_once ASAW_PLUGIN_DIR . 'includes/providers/class-asaw-image-provider-interface.php';
-require_once ASAW_PLUGIN_DIR . 'includes/providers/class-asaw-none-image-provider.php';
-require_once ASAW_PLUGIN_DIR . 'includes/providers/class-asaw-openai-image-provider.php';
-require_once ASAW_PLUGIN_DIR . 'includes/providers/class-asaw-ollama-provider.php';
-require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-image.php';
-require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-generator.php';
-require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-cron.php';
-require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-settings.php';
-require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-plugin.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/class-seoapw-logger.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/class-seoapw-utils.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/class-seoapw-provider-interface.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/providers/class-seoapw-image-provider-interface.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/providers/class-seoapw-none-image-provider.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/providers/class-seoapw-openai-image-provider.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/providers/class-seoapw-ollama-provider.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/class-seoapw-image.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/class-seoapw-generator.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/class-seoapw-cron.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/class-seoapw-settings.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/class-seoapw-plugin.php';
 
 // Pro features — loaded after free-tier classes so they can extend/hook safely.
-require_once ASAW_PLUGIN_DIR . 'includes/class-seoapw-license.php';
-require_once ASAW_PLUGIN_DIR . 'includes/class-seoapw-remote.php';
-require_once ASAW_PLUGIN_DIR . 'includes/class-seoapw-pro-ui.php';
-require_once ASAW_PLUGIN_DIR . 'includes/class-seoapw-upsell.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/class-seoapw-license.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/class-seoapw-remote.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/class-seoapw-pro-ui.php';
+require_once SEOAPW_PLUGIN_DIR . 'includes/class-seoapw-upsell.php';
 
 // Activation / deactivation hooks.
-register_activation_hook( __FILE__, array( 'ASAW_Plugin', 'activate' ) );
-register_deactivation_hook( __FILE__, array( 'ASAW_Plugin', 'deactivate' ) );
+register_activation_hook( __FILE__, array( 'SEOAPW_Plugin', 'activate' ) );
+register_deactivation_hook( __FILE__, array( 'SEOAPW_Plugin', 'deactivate' ) );
 
 // Boot the plugin on plugins_loaded so all WP functions are available.
-add_action( 'plugins_loaded', array( 'ASAW_Plugin', 'get_instance' ) );
+add_action( 'plugins_loaded', array( 'SEOAPW_Plugin', 'get_instance' ) );

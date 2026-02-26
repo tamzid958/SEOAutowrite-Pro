@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class ASAW_Utils {
+class SEOAPW_Utils {
 
 	/**
 	 * Build the full prompt to send to Ollama.

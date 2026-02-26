@@ -7,9 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class ASAW_Plugin {
+class SEOAPW_Plugin {
 
-	/** @var ASAW_Plugin|null */
+	/** @var SEOAPW_Plugin|null */
 	private static $instance = null;
 
 	// -------------------------------------------------------------------------
@@ -19,7 +19,7 @@ class ASAW_Plugin {
 	/**
 	 * Return the single instance, creating it if necessary.
 	 *
-	 * @return ASAW_Plugin
+	 * @return SEOAPW_Plugin
 	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
@@ -38,12 +38,12 @@ class ASAW_Plugin {
 		// Reschedule cron whenever the option is updated so changes take effect
 		// with the newly saved values (sanitize_options passes the new options
 		// directly, but this also covers any direct update_option() calls).
-		add_action( 'update_option_asaw_options', array( $this, 'on_options_updated' ) );
+		add_action( 'update_option_seoapw_options', array( $this, 'on_options_updated' ) );
 
-		$settings = new ASAW_Settings();
+		$settings = new SEOAPW_Settings();
 		$settings->init();
 
-		$cron = new ASAW_Cron();
+		$cron = new SEOAPW_Cron();
 		$cron->init();
 	}
 
@@ -56,7 +56,7 @@ class ASAW_Plugin {
 	 * Schedules the cron event if the plugin is enabled.
 	 */
 	public static function activate() {
-		$cron = new ASAW_Cron();
+		$cron = new SEOAPW_Cron();
 		$cron->init();
 		$cron->schedule();
 	}
@@ -66,7 +66,7 @@ class ASAW_Plugin {
 	 * Removes the cron event so no further runs occur while the plugin is off.
 	 */
 	public static function deactivate() {
-		$cron = new ASAW_Cron();
+		$cron = new SEOAPW_Cron();
 		$cron->unschedule();
 	}
 
@@ -75,10 +75,10 @@ class ASAW_Plugin {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Triggered after asaw_options is saved; reschedule with the new values.
+	 * Triggered after seoapw_options is saved; reschedule with the new values.
 	 */
 	public function on_options_updated() {
-		$cron = new ASAW_Cron();
+		$cron = new SEOAPW_Cron();
 		$cron->schedule();
 	}
 }

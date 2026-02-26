@@ -1,13 +1,13 @@
 <?php
 /**
- * Ollama API provider — implements ASAW_Provider_Interface.
+ * Ollama API provider — implements SEOAPW_Provider_Interface.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
+class SEOAPW_Ollama_Provider implements SEOAPW_Provider_Interface {
 
 	/** How long to cache the model list (seconds). */
 	const MODELS_TRANSIENT_TTL = HOUR_IN_SECONDS;
@@ -54,14 +54,14 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 
 			if ( is_wp_error( $selected_topic ) ) {
 				$last_error = $selected_topic;
-				ASAW_Logger::info(
+				SEOAPW_Logger::info(
 					"Model {$model} failed during topic selection; trying next fallback.",
 					array( 'reason' => $selected_topic->get_error_message() )
 				);
 				continue;
 			}
 
-			$prompt = ASAW_Utils::build_prompt(
+			$prompt = SEOAPW_Utils::build_prompt(
 				$category_name,
 				$category_description,
 				$this->options,
@@ -72,18 +72,18 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 			$result = $this->try_generate_with_model( $prompt, $model );
 
 			if ( ! is_wp_error( $result ) ) {
-				ASAW_Logger::info( "Article generated successfully with model: {$model}." );
+				SEOAPW_Logger::info( "Article generated successfully with model: {$model}." );
 				return $result;
 			}
 
 			$last_error = $result;
-			ASAW_Logger::info(
+			SEOAPW_Logger::info(
 				"Model {$model} failed; trying next fallback.",
 				array( 'reason' => $result->get_error_message() )
 			);
 		}
 
-		ASAW_Logger::error( 'All models failed.', array( 'last_error' => $last_error->get_error_message() ) );
+		SEOAPW_Logger::error( 'All models failed.', array( 'last_error' => $last_error->get_error_message() ) );
 		return $last_error;
 	}
 
@@ -98,7 +98,7 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 	 */
 	private function choose_specific_topic_with_model( $model, $category_name, $category_description, array $recent_titles ) {
 		$language     = sanitize_text_field( $this->options['language'] ?? 'en' );
-		$topic_prompt = ASAW_Utils::build_topic_selection_prompt(
+		$topic_prompt = SEOAPW_Utils::build_topic_selection_prompt(
 			$category_name,
 			$category_description,
 			$recent_titles,
@@ -120,7 +120,7 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 			return new WP_Error( 'topic_selection_empty', __( 'Selected topic was empty.', 'seoautowrite-pro' ) );
 		}
 
-		ASAW_Logger::info( 'Selected specific topic for article generation.', array(
+		SEOAPW_Logger::info( 'Selected specific topic for article generation.', array(
 			'model' => $model,
 			'topic' => $selected_topic,
 		) );
@@ -136,19 +136,19 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 	 */
 	public function fetch_available_models() {
 		$tags_url  = $this->get_tags_url();
-		$cache_key = 'asaw_local_models_' . md5( $tags_url );
+		$cache_key = 'seoapw_local_models_' . md5( $tags_url );
 		$cached    = get_transient( $cache_key );
 
 		if ( is_array( $cached ) ) {
 			return $cached;
 		}
 
-		ASAW_Logger::debug( 'Fetching local Ollama model list.', array( 'url' => $tags_url ) );
+		SEOAPW_Logger::debug( 'Fetching local Ollama model list.', array( 'url' => $tags_url ) );
 
 		$api_key  = sanitize_text_field( $this->options['ollama_api_key'] ?? '' );
 		$response = wp_remote_get( $tags_url, array(
 			'timeout'    => 15,
-			'user-agent' => 'ASAW/' . ASAW_VERSION . '; ' . get_site_url(),
+			'user-agent' => 'SEOAPW/' . SEOAPW_VERSION . '; ' . get_site_url(),
 			'headers'    => array_filter( array(
 				'Accept'        => 'application/json',
 				'Authorization' => $api_key ? 'Bearer ' . $api_key : '',
@@ -156,7 +156,7 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 		) );
 
 		if ( is_wp_error( $response ) ) {
-			ASAW_Logger::error( 'Failed to fetch local Ollama model list.', array( 'error' => $response->get_error_message() ) );
+			SEOAPW_Logger::error( 'Failed to fetch local Ollama model list.', array( 'error' => $response->get_error_message() ) );
 			return $response;
 		}
 
@@ -169,7 +169,7 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 				__( 'Ollama /api/tags returned HTTP %d.', 'seoautowrite-pro' ),
 				$code
 			);
-			ASAW_Logger::error( $msg, array( 'body' => substr( $body_text, 0, 300 ) ) );
+			SEOAPW_Logger::error( $msg, array( 'body' => substr( $body_text, 0, 300 ) ) );
 			return new WP_Error( 'ollama_tags_http_error', $msg );
 		}
 
@@ -178,7 +178,7 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 		// /api/tags returns {"models":[{"name":"llama3.3:latest",...},...]}
 		if ( ! is_array( $data ) || empty( $data['models'] ) ) {
 			$msg = __( 'Could not parse model list from Ollama /api/tags.', 'seoautowrite-pro' );
-			ASAW_Logger::error( $msg, array( 'body' => substr( $body_text, 0, 300 ) ) );
+			SEOAPW_Logger::error( $msg, array( 'body' => substr( $body_text, 0, 300 ) ) );
 			return new WP_Error( 'ollama_tags_parse_error', $msg );
 		}
 
@@ -188,7 +188,7 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 
 		set_transient( $cache_key, $models, self::MODELS_TRANSIENT_TTL );
 
-		ASAW_Logger::info(
+		SEOAPW_Logger::info(
 			'Fetched local Ollama model list.',
 			array( 'count' => count( $models ), 'models' => $models )
 		);
@@ -252,30 +252,30 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 		}
 
 		$article    = $this->parse_model_output( $raw );
-		$validation = is_array( $article ) ? ASAW_Utils::validate_schema( $article ) : null;
+		$validation = is_array( $article ) ? SEOAPW_Utils::validate_schema( $article ) : null;
 
 		if ( ! is_array( $article ) || is_wp_error( $validation ) ) {
 			$reason = is_wp_error( $validation ) ? $validation->get_error_message() : 'Output is not valid JSON.';
-			ASAW_Logger::info(
+			SEOAPW_Logger::info(
 				"Model {$model}: first attempt invalid; retrying with repair prompt.",
 				array( 'reason' => $reason )
 			);
 
 			// --- Repair attempt ---
-			$repair_prompt = ASAW_Utils::repair_prompt( $raw );
+			$repair_prompt = SEOAPW_Utils::repair_prompt( $raw );
 			$raw2          = $this->call_ollama_raw( $repair_prompt, $model );
 			if ( is_wp_error( $raw2 ) ) {
 				return $raw2;
 			}
 
 			$article    = $this->parse_model_output( $raw2 );
-			$validation = is_array( $article ) ? ASAW_Utils::validate_schema( $article ) : null;
+			$validation = is_array( $article ) ? SEOAPW_Utils::validate_schema( $article ) : null;
 
 			if ( ! is_array( $article ) || is_wp_error( $validation ) ) {
 				$reason = is_wp_error( $validation )
 					? $validation->get_error_message()
 					: 'Could not parse model output as JSON after repair.';
-				ASAW_Logger::error( "Model {$model}: invalid JSON after repair.", array( 'reason' => $reason ) );
+				SEOAPW_Logger::error( "Model {$model}: invalid JSON after repair.", array( 'reason' => $reason ) );
 				return new WP_Error( 'invalid_json_after_repair', $reason );
 			}
 		}
@@ -304,7 +304,7 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 		$args = array(
 			'timeout'     => $timeout,
 			'redirection' => 3,
-			'user-agent'  => 'ASAW/' . ASAW_VERSION . '; ' . get_site_url(),
+			'user-agent'  => 'SEOAPW/' . SEOAPW_VERSION . '; ' . get_site_url(),
 			'headers'     => array(
 				'Authorization' => 'Bearer ' . $api_key,
 				'Content-Type'  => 'application/json',
@@ -312,12 +312,12 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 			'body' => $body,
 		);
 
-		ASAW_Logger::debug( 'Sending request to Ollama.', array( 'endpoint' => $endpoint, 'model' => $model ) );
+		SEOAPW_Logger::debug( 'Sending request to Ollama.', array( 'endpoint' => $endpoint, 'model' => $model ) );
 
 		$response = wp_remote_post( $endpoint, $args );
 
 		if ( is_wp_error( $response ) ) {
-			ASAW_Logger::error( 'Ollama HTTP request failed.', array( 'error' => $response->get_error_message() ) );
+			SEOAPW_Logger::error( 'Ollama HTTP request failed.', array( 'error' => $response->get_error_message() ) );
 			return $response;
 		}
 
@@ -330,7 +330,7 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 				__( 'Ollama API returned HTTP %d.', 'seoautowrite-pro' ),
 				$code
 			);
-			ASAW_Logger::error( $msg, array( 'body' => substr( $body_text, 0, 500 ) ) );
+			SEOAPW_Logger::error( $msg, array( 'body' => substr( $body_text, 0, 500 ) ) );
 			return new WP_Error( 'ollama_http_error', $msg );
 		}
 
@@ -338,11 +338,11 @@ class ASAW_Ollama_Provider implements ASAW_Provider_Interface {
 
 		if ( ! is_array( $api_data ) || ! isset( $api_data['response'] ) ) {
 			$msg = __( 'Ollama API response is missing the "response" field.', 'seoautowrite-pro' );
-			ASAW_Logger::error( $msg, array( 'body' => substr( $body_text, 0, 500 ) ) );
+			SEOAPW_Logger::error( $msg, array( 'body' => substr( $body_text, 0, 500 ) ) );
 			return new WP_Error( 'ollama_parse_error', $msg );
 		}
 
-		ASAW_Logger::debug( 'Received Ollama response.', array( 'length' => strlen( $api_data['response'] ) ) );
+		SEOAPW_Logger::debug( 'Received Ollama response.', array( 'length' => strlen( $api_data['response'] ) ) );
 
 		return $api_data['response'];
 	}

@@ -40,16 +40,16 @@ class SEOAPW_Pro_UI {
 
 		wp_enqueue_style(
 			'seoapw-pro',
-			ASAW_PLUGIN_URL . 'assets/css/seoapw-pro.css',
+			SEOAPW_PLUGIN_URL . 'assets/css/seoapw-pro.css',
 			array(),
-			ASAW_VERSION . '.' . filemtime( ASAW_PLUGIN_DIR . 'assets/css/seoapw-pro.css' )
+			SEOAPW_VERSION . '.' . filemtime( SEOAPW_PLUGIN_DIR . 'assets/css/seoapw-pro.css' )
 		);
 
 		wp_enqueue_script(
 			'seoapw-pro',
-			ASAW_PLUGIN_URL . 'assets/js/seoapw-pro.js',
+			SEOAPW_PLUGIN_URL . 'assets/js/seoapw-pro.js',
 			array( 'jquery' ),
-			ASAW_VERSION,
+			SEOAPW_VERSION,
 			true
 		);
 
@@ -228,15 +228,15 @@ class SEOAPW_Pro_UI {
 		$topup_amount  = (float) ( $license['auto_topup_amount_usd'] ?? 0 );
 		$top_up_url    = seoapw_topup_url();
 		?>
-		<section class="asaw-card seoapw-license-card">
-			<h2 class="asaw-card-title"><?php esc_html_e( 'Pro License', 'seoapw' ); ?></h2>
+		<section class="seoapw-card seoapw-license-card">
+			<h2 class="seoapw-card-title"><?php esc_html_e( 'Pro License', 'seoapw' ); ?></h2>
 
 			<?php if ( $is_pro ) : ?>
 
 				<!-- Status: Active -->
-				<div class="asaw-row">
-					<div class="asaw-label"><?php esc_html_e( 'Status', 'seoapw' ); ?></div>
-					<div class="asaw-control">
+				<div class="seoapw-row">
+					<div class="seoapw-label"><?php esc_html_e( 'Status', 'seoapw' ); ?></div>
+					<div class="seoapw-control">
 						<span class="seoapw-badge seoapw-badge--active">
 							<?php esc_html_e( '✅ Pro Active', 'seoapw' ); ?>
 						</span>
@@ -247,23 +247,23 @@ class SEOAPW_Pro_UI {
 				</div>
 
 				<!-- Balance -->
-				<div class="asaw-row">
-					<div class="asaw-label"><?php esc_html_e( 'Balance', 'seoapw' ); ?></div>
-					<div class="asaw-control">
+				<div class="seoapw-row">
+					<div class="seoapw-label"><?php esc_html_e( 'Balance', 'seoapw' ); ?></div>
+					<div class="seoapw-control">
 						<strong>$<?php echo esc_html( number_format( $balance, 2 ) ); ?></strong>
 						<span class="seoapw-articles-rem">
 							&mdash; <?php echo esc_html( sprintf( _n( '%d article remaining', '%d articles remaining', $articles_rem, 'seoapw' ), $articles_rem ) ); ?>
 						</span>
-						<a href="<?php echo esc_url( $top_up_url ); ?>" target="_blank" class="asaw-btn seoapw-btn-topup" style="margin-left:12px;">
+						<a href="<?php echo esc_url( $top_up_url ); ?>" target="_blank" class="seoapw-btn seoapw-btn-topup" style="margin-left:12px;">
 							<?php esc_html_e( 'Top Up Balance', 'seoapw' ); ?>
 						</a>
 					</div>
 				</div>
 
 				<!-- Auto top-up -->
-				<div class="asaw-row">
-					<div class="asaw-label"><?php esc_html_e( 'Auto Top-Up', 'seoapw' ); ?></div>
-					<div class="asaw-control">
+				<div class="seoapw-row">
+					<div class="seoapw-label"><?php esc_html_e( 'Auto Top-Up', 'seoapw' ); ?></div>
+					<div class="seoapw-control">
 						<?php if ( $auto_topup ) : ?>
 							<span class="seoapw-badge seoapw-badge--active">
 								<?php
@@ -287,22 +287,22 @@ class SEOAPW_Pro_UI {
 				</div>
 
 				<!-- Deactivate -->
-				<div class="asaw-row">
-					<div class="asaw-label"></div>
-					<div class="asaw-control">
+				<div class="seoapw-row">
+					<div class="seoapw-label"></div>
+					<div class="seoapw-control">
 						<button type="button" id="seoapw-deactivate-btn" class="seoapw-btn-link seoapw-btn-deactivate">
 							<?php esc_html_e( 'Deactivate license on this site', 'seoapw' ); ?>
 						</button>
-						<span id="seoapw-deactivate-status" class="asaw-btn-status"></span>
+						<span id="seoapw-deactivate-status" class="seoapw-btn-status"></span>
 					</div>
 				</div>
 
 			<?php else : ?>
 
 				<!-- Status: No license -->
-				<div class="asaw-row">
-					<div class="asaw-label"><?php esc_html_e( 'Status', 'seoapw' ); ?></div>
-					<div class="asaw-control">
+				<div class="seoapw-row">
+					<div class="seoapw-label"><?php esc_html_e( 'Status', 'seoapw' ); ?></div>
+					<div class="seoapw-control">
 						<span class="seoapw-badge seoapw-badge--inactive">
 							<?php esc_html_e( '⚠️ No Active License', 'seoapw' ); ?>
 						</span>
@@ -310,22 +310,22 @@ class SEOAPW_Pro_UI {
 				</div>
 
 				<!-- License key input -->
-				<div class="asaw-row">
-					<label class="asaw-label" for="seoapw-license-key-input">
+				<div class="seoapw-row">
+					<label class="seoapw-label" for="seoapw-license-key-input">
 						<?php esc_html_e( 'License Key', 'seoapw' ); ?>
 					</label>
-					<div class="asaw-control">
-						<div class="asaw-model-row">
-							<input type="text" id="seoapw-license-key-input" class="asaw-input asaw-mono"
+					<div class="seoapw-control">
+						<div class="seoapw-model-row">
+							<input type="text" id="seoapw-license-key-input" class="seoapw-input seoapw-mono"
 							       placeholder="XXXX-XXXX-XXXX-XXXX"
 							       value="<?php echo esc_attr( $stored_key ); ?>"
 							       autocomplete="off">
-							<button type="button" id="seoapw-activate-btn" class="asaw-btn">
+							<button type="button" id="seoapw-activate-btn" class="seoapw-btn">
 								<?php esc_html_e( 'Activate', 'seoapw' ); ?>
 							</button>
 						</div>
-						<span id="seoapw-activate-status" class="asaw-btn-status"></span>
-						<p class="asaw-desc">
+						<span id="seoapw-activate-status" class="seoapw-btn-status"></span>
+						<p class="seoapw-desc">
 							<?php esc_html_e( 'Enter your Lemon Squeezy license key to enable Pro features.', 'seoapw' ); ?>
 						</p>
 					</div>

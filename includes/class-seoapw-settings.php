@@ -7,26 +7,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class ASAW_Settings {
+class SEOAPW_Settings {
 
-	const OPTION_KEY        = 'asaw_options';
+	const OPTION_KEY        = 'seoapw_options';
 	const MENU_SLUG         = 'seoautowrite-pro';
-	const RUN_NONCE         = 'asaw_run_now';
-	const FETCH_MODELS_NONCE = 'asaw_fetch_models';
-	const SETTINGS_GROUP    = 'asaw_settings_group';
+	const RUN_NONCE         = 'seoapw_run_now';
+	const FETCH_MODELS_NONCE = 'seoapw_fetch_models';
+	const SETTINGS_GROUP    = 'seoapw_settings_group';
 
 	// -------------------------------------------------------------------------
 	// Init
 	// -------------------------------------------------------------------------
 
 	public function init() {
-		add_action( 'admin_menu',                  array( $this, 'add_menu' ) );
-		add_action( 'admin_head',                  array( $this, 'output_menu_icon_css' ) );
-		add_action( 'admin_init',                  array( $this, 'register_settings' ) );
-		add_action( 'admin_enqueue_scripts',       array( $this, 'enqueue_assets' ) );
-		add_action( 'wp_ajax_asaw_run_now',        array( $this, 'ajax_run_now' ) );
-		add_action( 'wp_ajax_asaw_fetch_models',   array( $this, 'ajax_fetch_models' ) );
-		add_filter( 'plugin_action_links_' . plugin_basename( ASAW_PLUGIN_FILE ), array( $this, 'add_plugin_action_links' ) );
+		add_action( 'admin_menu',                    array( $this, 'add_menu' ) );
+		add_action( 'admin_head',                    array( $this, 'output_menu_icon_css' ) );
+		add_action( 'admin_init',                    array( $this, 'register_settings' ) );
+		add_action( 'admin_enqueue_scripts',         array( $this, 'enqueue_assets' ) );
+		add_action( 'wp_ajax_seoapw_run_now',        array( $this, 'ajax_run_now' ) );
+		add_action( 'wp_ajax_seoapw_fetch_models',   array( $this, 'ajax_fetch_models' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( SEOAPW_PLUGIN_FILE ), array( $this, 'add_plugin_action_links' ) );
 	}
 
 	// -------------------------------------------------------------------------
@@ -34,7 +34,7 @@ class ASAW_Settings {
 	// -------------------------------------------------------------------------
 
 	public function add_menu() {
-		$menu_icon = ASAW_PLUGIN_URL . 'assets/logo.png';
+		$menu_icon = SEOAPW_PLUGIN_URL . 'assets/logo.png';
 
 		add_menu_page(
 			__( 'SEOAutowrite Pro', 'seoautowrite-pro' ),
@@ -98,7 +98,7 @@ class ASAW_Settings {
 	 * @return array Sanitized options.
 	 */
 	public function sanitize_options( $input ) {
-		$defaults = ASAW_Utils::get_default_options();
+		$defaults = SEOAPW_Utils::get_default_options();
 		$out      = $defaults;
 
 		// General.
@@ -165,28 +165,28 @@ class ASAW_Settings {
 		}
 
 		wp_enqueue_style(
-			'asaw-inter',
+			'seoapw-inter',
 			'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
 			array(),
 			null
 		);
 
 		wp_enqueue_style(
-			'asaw-admin',
-			ASAW_PLUGIN_URL . 'assets/admin.css',
-			array( 'asaw-inter' ),
-			ASAW_VERSION . '.' . filemtime( ASAW_PLUGIN_DIR . 'assets/admin.css' )
+			'seoapw-admin',
+			SEOAPW_PLUGIN_URL . 'assets/admin.css',
+			array( 'seoapw-inter' ),
+			SEOAPW_VERSION . '.' . filemtime( SEOAPW_PLUGIN_DIR . 'assets/admin.css' )
 		);
 
 		wp_enqueue_script(
-			'asaw-admin',
-			ASAW_PLUGIN_URL . 'assets/admin.js',
+			'seoapw-admin',
+			SEOAPW_PLUGIN_URL . 'assets/admin.js',
 			array( 'jquery' ),
-			ASAW_VERSION,
+			SEOAPW_VERSION,
 			true
 		);
 
-		wp_localize_script( 'asaw-admin', 'asawAdmin', array(
+		wp_localize_script( 'seoapw-admin', 'seoapwAdmin', array(
 			'ajaxUrl'          => admin_url( 'admin-ajax.php' ),
 			'runNonce'         => wp_create_nonce( self::RUN_NONCE ),
 			'fetchModelsNonce' => wp_create_nonce( self::FETCH_MODELS_NONCE ),
@@ -213,10 +213,10 @@ class ASAW_Settings {
 		}
 
 		$options             = get_option( self::OPTION_KEY, array() );
-		$options             = wp_parse_args( $options, ASAW_Utils::get_default_options() );
+		$options             = wp_parse_args( $options, SEOAPW_Utils::get_default_options() );
 		$options['enabled']  = true; // Force-enable for manual runs.
 
-		$generator = new ASAW_Generator( $options );
+		$generator = new SEOAPW_Generator( $options );
 		$generator->run();
 
 		wp_send_json_success( array(
@@ -236,8 +236,8 @@ class ASAW_Settings {
 		}
 
 		$options  = get_option( self::OPTION_KEY, array() );
-		$options  = wp_parse_args( $options, ASAW_Utils::get_default_options() );
-		$provider = new ASAW_Ollama_Provider( $options );
+		$options  = wp_parse_args( $options, SEOAPW_Utils::get_default_options() );
+		$provider = new SEOAPW_Ollama_Provider( $options );
 		$models   = $provider->fetch_available_models();
 
 		if ( is_wp_error( $models ) ) {
@@ -257,18 +257,18 @@ class ASAW_Settings {
 		}
 
 		$options    = get_option( self::OPTION_KEY, array() );
-		$opts       = wp_parse_args( $options, ASAW_Utils::get_default_options() );
-		$logs       = ASAW_Logger::get_logs( 10 );
+		$opts       = wp_parse_args( $options, SEOAPW_Utils::get_default_options() );
+		$logs       = SEOAPW_Logger::get_logs( 10 );
 		$categories = get_categories( array( 'hide_empty' => false ) );
 		$authors    = get_users( array( 'capability' => 'edit_posts' ) );
-		$next_run   = wp_next_scheduled( ASAW_Cron::HOOK );
+		$next_run   = wp_next_scheduled( SEOAPW_Cron::HOOK );
 		$opt_name   = self::OPTION_KEY;
 
 		?>
-		<div class="wrap asaw-wrap">
+		<div class="wrap seoapw-wrap">
 
 			<!-- Header -->
-			<div class="asaw-header">
+			<div class="seoapw-header">
 				<?php
 				/**
 				 * Hook: seoapw_admin_header_after_title
@@ -292,75 +292,75 @@ class ASAW_Settings {
 				<?php settings_fields( self::SETTINGS_GROUP ); ?>
 
 				<!-- ===================== GENERAL ===================== -->
-				<section class="asaw-card">
-					<h2 class="asaw-card-title"><?php esc_html_e( 'General', 'seoautowrite-pro' ); ?></h2>
+				<section class="seoapw-card">
+					<h2 class="seoapw-card-title"><?php esc_html_e( 'General', 'seoautowrite-pro' ); ?></h2>
 
-					<div class="asaw-row">
-						<div class="asaw-label"><?php esc_html_e( 'Enable Plugin', 'seoautowrite-pro' ); ?></div>
-						<div class="asaw-control">
-							<label class="asaw-check-label">
+					<div class="seoapw-row">
+						<div class="seoapw-label"><?php esc_html_e( 'Enable Plugin', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-control">
+							<label class="seoapw-check-label">
 								<input type="checkbox" name="<?php echo esc_attr( $opt_name ); ?>[enabled]" value="1" <?php checked( $opts['enabled'] ); ?>>
 								<?php esc_html_e( 'Enable scheduled article generation', 'seoautowrite-pro' ); ?>
 							</label>
 						</div>
 					</div>
 
-					<div class="asaw-row">
-						<div class="asaw-label"><?php esc_html_e( 'On Invalid JSON', 'seoautowrite-pro' ); ?></div>
-						<div class="asaw-control">
-							<select name="<?php echo esc_attr( $opt_name ); ?>[on_invalid_json]" class="asaw-select">
+					<div class="seoapw-row">
+						<div class="seoapw-label"><?php esc_html_e( 'On Invalid JSON', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-control">
+							<select name="<?php echo esc_attr( $opt_name ); ?>[on_invalid_json]" class="seoapw-select">
 								<option value="abort" <?php selected( $opts['on_invalid_json'], 'abort' ); ?>><?php esc_html_e( 'Abort run (default)', 'seoautowrite-pro' ); ?></option>
 								<option value="draft" <?php selected( $opts['on_invalid_json'], 'draft' ); ?>><?php esc_html_e( 'Create minimal draft', 'seoautowrite-pro' ); ?></option>
 							</select>
-							<p class="asaw-desc"><?php esc_html_e( 'What to do when the model returns invalid JSON after the repair retry.', 'seoautowrite-pro' ); ?></p>
+							<p class="seoapw-desc"><?php esc_html_e( 'What to do when the model returns invalid JSON after the repair retry.', 'seoautowrite-pro' ); ?></p>
 						</div>
 					</div>
 				</section>
 
 				<!-- ===================== OLLAMA API ===================== -->
-				<section class="asaw-card">
-					<h2 class="asaw-card-title"><?php esc_html_e( 'Ollama API', 'seoautowrite-pro' ); ?></h2>
+				<section class="seoapw-card">
+					<h2 class="seoapw-card-title"><?php esc_html_e( 'Ollama API', 'seoautowrite-pro' ); ?></h2>
 
-					<div class="asaw-row">
-						<label class="asaw-label" for="asaw-ollama-endpoint"><?php esc_html_e( 'Endpoint', 'seoautowrite-pro' ); ?></label>
-						<div class="asaw-control">
-							<input type="url" id="asaw-ollama-endpoint" class="asaw-input"
+					<div class="seoapw-row">
+						<label class="seoapw-label" for="seoapw-ollama-endpoint"><?php esc_html_e( 'Endpoint', 'seoautowrite-pro' ); ?></label>
+						<div class="seoapw-control">
+							<input type="url" id="seoapw-ollama-endpoint" class="seoapw-input"
 								name="<?php echo esc_attr( $opt_name ); ?>[ollama_endpoint]"
 								value="<?php echo esc_attr( $opts['ollama_endpoint'] ); ?>">
 						</div>
 					</div>
 
-					<div class="asaw-row">
-						<label class="asaw-label" for="asaw-ollama-api-key"><?php esc_html_e( 'API Key', 'seoautowrite-pro' ); ?></label>
-						<div class="asaw-control">
-							<input type="password" id="asaw-ollama-api-key" class="asaw-input"
+					<div class="seoapw-row">
+						<label class="seoapw-label" for="seoapw-ollama-api-key"><?php esc_html_e( 'API Key', 'seoautowrite-pro' ); ?></label>
+						<div class="seoapw-control">
+							<input type="password" id="seoapw-ollama-api-key" class="seoapw-input"
 								name="<?php echo esc_attr( $opt_name ); ?>[ollama_api_key]"
 								value="<?php echo esc_attr( $opts['ollama_api_key'] ); ?>"
 								autocomplete="new-password">
 						</div>
 					</div>
 
-					<div class="asaw-row">
-						<label class="asaw-label" for="asaw-ollama-model"><?php esc_html_e( 'Model', 'seoautowrite-pro' ); ?></label>
-						<div class="asaw-control">
-							<div class="asaw-model-row">
-								<input type="text" id="asaw-ollama-model" class="asaw-input asaw-mono"
+					<div class="seoapw-row">
+						<label class="seoapw-label" for="seoapw-ollama-model"><?php esc_html_e( 'Model', 'seoautowrite-pro' ); ?></label>
+						<div class="seoapw-control">
+							<div class="seoapw-model-row">
+								<input type="text" id="seoapw-ollama-model" class="seoapw-input seoapw-mono"
 									name="<?php echo esc_attr( $opt_name ); ?>[ollama_model]"
 									value="<?php echo esc_attr( $opts['ollama_model'] ); ?>">
-								<button type="button" id="asaw-fetch-models" class="asaw-btn">
+								<button type="button" id="seoapw-fetch-models" class="seoapw-btn">
 									<?php esc_html_e( 'Fetch', 'seoautowrite-pro' ); ?>
 								</button>
 							</div>
-							<span id="asaw-fetch-models-status" class="asaw-btn-status"></span>
-							<div id="asaw-models-list" class="asaw-models-list"></div>
-							<p class="asaw-desc"><?php esc_html_e( 'Primary model for generation. Falls back to other available models if this one fails.', 'seoautowrite-pro' ); ?></p>
+							<span id="seoapw-fetch-models-status" class="seoapw-btn-status"></span>
+							<div id="seoapw-models-list" class="seoapw-models-list"></div>
+							<p class="seoapw-desc"><?php esc_html_e( 'Primary model for generation. Falls back to other available models if this one fails.', 'seoautowrite-pro' ); ?></p>
 						</div>
 					</div>
 
-					<div class="asaw-row">
-						<label class="asaw-label" for="asaw-timeout"><?php esc_html_e( 'Timeout (seconds)', 'seoautowrite-pro' ); ?></label>
-						<div class="asaw-control">
-							<input type="number" id="asaw-timeout" class="asaw-input asaw-small" min="10" max="600"
+					<div class="seoapw-row">
+						<label class="seoapw-label" for="seoapw-timeout"><?php esc_html_e( 'Timeout (seconds)', 'seoautowrite-pro' ); ?></label>
+						<div class="seoapw-control">
+							<input type="number" id="seoapw-timeout" class="seoapw-input seoapw-small" min="10" max="600"
 								name="<?php echo esc_attr( $opt_name ); ?>[ollama_timeout_seconds]"
 								value="<?php echo esc_attr( $opts['ollama_timeout_seconds'] ); ?>">
 						</div>
@@ -368,25 +368,25 @@ class ASAW_Settings {
 				</section>
 
 				<!-- ===================== SCHEDULE ===================== -->
-				<section class="asaw-card">
-					<h2 class="asaw-card-title"><?php esc_html_e( 'Schedule', 'seoautowrite-pro' ); ?></h2>
+				<section class="seoapw-card">
+					<h2 class="seoapw-card-title"><?php esc_html_e( 'Schedule', 'seoautowrite-pro' ); ?></h2>
 
-					<div class="asaw-row">
-						<div class="asaw-label"><?php esc_html_e( 'Schedule Window', 'seoautowrite-pro' ); ?></div>
-						<div class="asaw-control">
-							<div class="asaw-grid-2">
-								<div class="asaw-field-group">
-									<label for="asaw-schedule-frequency"><?php esc_html_e( 'Frequency', 'seoautowrite-pro' ); ?></label>
-									<select id="asaw-schedule-frequency" class="asaw-select"
+					<div class="seoapw-row">
+						<div class="seoapw-label"><?php esc_html_e( 'Schedule Window', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-control">
+							<div class="seoapw-grid-2">
+								<div class="seoapw-field-group">
+									<label for="seoapw-schedule-frequency"><?php esc_html_e( 'Frequency', 'seoautowrite-pro' ); ?></label>
+									<select id="seoapw-schedule-frequency" class="seoapw-select"
 										name="<?php echo esc_attr( $opt_name ); ?>[schedule_frequency]">
 										<option value="daily"  <?php selected( $opts['schedule_frequency'], 'daily' ); ?>><?php esc_html_e( 'Daily', 'seoautowrite-pro' ); ?></option>
 										<option value="weekly" <?php selected( $opts['schedule_frequency'], 'weekly' ); ?>><?php esc_html_e( 'Weekly', 'seoautowrite-pro' ); ?></option>
 										<option value="custom" <?php selected( $opts['schedule_frequency'], 'custom' ); ?>><?php esc_html_e( 'Custom interval', 'seoautowrite-pro' ); ?></option>
 									</select>
 								</div>
-								<div class="asaw-field-group">
-									<label for="asaw-schedule-time"><?php esc_html_e( 'Time of Day', 'seoautowrite-pro' ); ?></label>
-									<input type="time" id="asaw-schedule-time" class="asaw-input"
+								<div class="seoapw-field-group">
+									<label for="seoapw-schedule-time"><?php esc_html_e( 'Time of Day', 'seoautowrite-pro' ); ?></label>
+									<input type="time" id="seoapw-schedule-time" class="seoapw-input"
 										name="<?php echo esc_attr( $opt_name ); ?>[schedule_time]"
 										value="<?php echo esc_attr( $opts['schedule_time'] ); ?>">
 								</div>
@@ -394,19 +394,19 @@ class ASAW_Settings {
 						</div>
 					</div>
 
-					<div class="asaw-row<?php echo 'custom' !== $opts['schedule_frequency'] ? ' is-hidden' : ''; ?>" id="asaw-custom-minutes-row">
-						<label class="asaw-label" for="asaw-custom-minutes"><?php esc_html_e( 'Custom Interval (min)', 'seoautowrite-pro' ); ?></label>
-						<div class="asaw-control">
-							<input type="number" id="asaw-custom-minutes" class="asaw-input asaw-small" min="1"
+					<div class="seoapw-row<?php echo 'custom' !== $opts['schedule_frequency'] ? ' is-hidden' : ''; ?>" id="seoapw-custom-minutes-row">
+						<label class="seoapw-label" for="seoapw-custom-minutes"><?php esc_html_e( 'Custom Interval (min)', 'seoautowrite-pro' ); ?></label>
+						<div class="seoapw-control">
+							<input type="number" id="seoapw-custom-minutes" class="seoapw-input seoapw-small" min="1"
 								name="<?php echo esc_attr( $opt_name ); ?>[schedule_custom_minutes]"
 								value="<?php echo esc_attr( $opts['schedule_custom_minutes'] ); ?>">
 						</div>
 					</div>
 
-					<div class="asaw-row">
-						<div class="asaw-label"><?php esc_html_e( 'Next Scheduled Run', 'seoautowrite-pro' ); ?></div>
-						<div class="asaw-control">
-							<p class="asaw-desc" style="margin-top:8px;font-size:13px;color:#334155;">
+					<div class="seoapw-row">
+						<div class="seoapw-label"><?php esc_html_e( 'Next Scheduled Run', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-control">
+							<p class="seoapw-desc" style="margin-top:8px;font-size:13px;color:#334155;">
 								<strong>
 									<?php
 									if ( $next_run ) {
@@ -422,13 +422,13 @@ class ASAW_Settings {
 				</section>
 
 				<!-- ===================== CONTENT ===================== -->
-				<section class="asaw-card">
-					<h2 class="asaw-card-title"><?php esc_html_e( 'Content', 'seoautowrite-pro' ); ?></h2>
+				<section class="seoapw-card">
+					<h2 class="seoapw-card-title"><?php esc_html_e( 'Content', 'seoautowrite-pro' ); ?></h2>
 
-					<div class="asaw-row">
-						<div class="asaw-label"><?php esc_html_e( 'Categories', 'seoautowrite-pro' ); ?></div>
-						<div class="asaw-control">
-							<select class="asaw-select" style="min-height:130px;max-width:460px;"
+					<div class="seoapw-row">
+						<div class="seoapw-label"><?php esc_html_e( 'Categories', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-control">
+							<select class="seoapw-select" style="min-height:130px;max-width:460px;"
 								name="<?php echo esc_attr( $opt_name ); ?>[categories][]" multiple>
 								<?php foreach ( $categories as $cat ) : ?>
 									<option value="<?php echo esc_attr( $cat->term_id ); ?>"
@@ -437,56 +437,56 @@ class ASAW_Settings {
 									</option>
 								<?php endforeach; ?>
 							</select>
-							<p class="asaw-desc"><?php esc_html_e( 'Hold Ctrl / Cmd to select multiple categories.', 'seoautowrite-pro' ); ?></p>
+							<p class="seoapw-desc"><?php esc_html_e( 'Hold Ctrl / Cmd to select multiple categories.', 'seoautowrite-pro' ); ?></p>
 						</div>
 					</div>
 
-					<div class="asaw-row">
-						<div class="asaw-label"><?php esc_html_e( 'Category Strategy', 'seoautowrite-pro' ); ?></div>
-						<div class="asaw-control">
-							<select name="<?php echo esc_attr( $opt_name ); ?>[category_strategy]" class="asaw-select">
+					<div class="seoapw-row">
+						<div class="seoapw-label"><?php esc_html_e( 'Category Strategy', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-control">
+							<select name="<?php echo esc_attr( $opt_name ); ?>[category_strategy]" class="seoapw-select">
 								<option value="rotate" <?php selected( $opts['category_strategy'], 'rotate' ); ?>><?php esc_html_e( 'Rotate (in order)', 'seoautowrite-pro' ); ?></option>
 								<option value="random" <?php selected( $opts['category_strategy'], 'random' ); ?>><?php esc_html_e( 'Random', 'seoautowrite-pro' ); ?></option>
 							</select>
 						</div>
 					</div>
 
-					<div class="asaw-row">
-						<div class="asaw-label"><?php esc_html_e( 'Writing Profile', 'seoautowrite-pro' ); ?></div>
-						<div class="asaw-control">
-							<div class="asaw-grid-2">
-								<div class="asaw-field-group">
-									<label for="asaw-tone"><?php esc_html_e( 'Tone', 'seoautowrite-pro' ); ?></label>
-									<input type="text" id="asaw-tone" class="asaw-input"
+					<div class="seoapw-row">
+						<div class="seoapw-label"><?php esc_html_e( 'Writing Profile', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-control">
+							<div class="seoapw-grid-2">
+								<div class="seoapw-field-group">
+									<label for="seoapw-tone"><?php esc_html_e( 'Tone', 'seoautowrite-pro' ); ?></label>
+									<input type="text" id="seoapw-tone" class="seoapw-input"
 										name="<?php echo esc_attr( $opt_name ); ?>[tone]"
 										value="<?php echo esc_attr( $opts['tone'] ); ?>"
 										placeholder="professional">
 								</div>
-								<div class="asaw-field-group">
-									<label for="asaw-language"><?php esc_html_e( 'Language', 'seoautowrite-pro' ); ?></label>
-									<input type="text" id="asaw-language" class="asaw-input"
+								<div class="seoapw-field-group">
+									<label for="seoapw-language"><?php esc_html_e( 'Language', 'seoautowrite-pro' ); ?></label>
+									<input type="text" id="seoapw-language" class="seoapw-input"
 										name="<?php echo esc_attr( $opt_name ); ?>[language]"
 										value="<?php echo esc_attr( $opts['language'] ); ?>"
 										placeholder="en">
 								</div>
 							</div>
-							<p class="asaw-desc"><?php esc_html_e( 'ISO 639-1 language code, e.g. en, fr, de.', 'seoautowrite-pro' ); ?></p>
+							<p class="seoapw-desc"><?php esc_html_e( 'ISO 639-1 language code, e.g. en, fr, de.', 'seoautowrite-pro' ); ?></p>
 						</div>
 					</div>
 
-					<div class="asaw-row">
-						<div class="asaw-label"><?php esc_html_e( 'Word Range', 'seoautowrite-pro' ); ?></div>
-						<div class="asaw-control">
-							<div class="asaw-grid-2">
-								<div class="asaw-field-group">
-									<label for="asaw-min-words"><?php esc_html_e( 'Min Words', 'seoautowrite-pro' ); ?></label>
-									<input type="number" id="asaw-min-words" class="asaw-input" min="100"
+					<div class="seoapw-row">
+						<div class="seoapw-label"><?php esc_html_e( 'Word Range', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-control">
+							<div class="seoapw-grid-2">
+								<div class="seoapw-field-group">
+									<label for="seoapw-min-words"><?php esc_html_e( 'Min Words', 'seoautowrite-pro' ); ?></label>
+									<input type="number" id="seoapw-min-words" class="seoapw-input" min="100"
 										name="<?php echo esc_attr( $opt_name ); ?>[min_words]"
 										value="<?php echo esc_attr( $opts['min_words'] ); ?>">
 								</div>
-								<div class="asaw-field-group">
-									<label for="asaw-max-words"><?php esc_html_e( 'Max Words', 'seoautowrite-pro' ); ?></label>
-									<input type="number" id="asaw-max-words" class="asaw-input" min="100"
+								<div class="seoapw-field-group">
+									<label for="seoapw-max-words"><?php esc_html_e( 'Max Words', 'seoautowrite-pro' ); ?></label>
+									<input type="number" id="seoapw-max-words" class="seoapw-input" min="100"
 										name="<?php echo esc_attr( $opt_name ); ?>[max_words]"
 										value="<?php echo esc_attr( $opts['max_words'] ); ?>">
 								</div>
@@ -494,31 +494,31 @@ class ASAW_Settings {
 						</div>
 					</div>
 
-					<div class="asaw-row">
-						<div class="asaw-label"><?php esc_html_e( 'Include FAQ', 'seoautowrite-pro' ); ?></div>
-						<div class="asaw-control">
-							<label class="asaw-check-label">
+					<div class="seoapw-row">
+						<div class="seoapw-label"><?php esc_html_e( 'Include FAQ', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-control">
+							<label class="seoapw-check-label">
 								<input type="checkbox" name="<?php echo esc_attr( $opt_name ); ?>[include_faq]" value="1" <?php checked( $opts['include_faq'] ); ?>>
 								<?php esc_html_e( 'Add a FAQ section to each article', 'seoautowrite-pro' ); ?>
 							</label>
 						</div>
 					</div>
 
-					<div class="asaw-row">
-						<div class="asaw-label"><?php esc_html_e( 'Publishing', 'seoautowrite-pro' ); ?></div>
-						<div class="asaw-control">
-							<div class="asaw-grid-2">
-								<div class="asaw-field-group">
-									<label for="asaw-post-status"><?php esc_html_e( 'Post Status', 'seoautowrite-pro' ); ?></label>
-									<select id="asaw-post-status" class="asaw-select" name="<?php echo esc_attr( $opt_name ); ?>[post_status]">
+					<div class="seoapw-row">
+						<div class="seoapw-label"><?php esc_html_e( 'Publishing', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-control">
+							<div class="seoapw-grid-2">
+								<div class="seoapw-field-group">
+									<label for="seoapw-post-status"><?php esc_html_e( 'Post Status', 'seoautowrite-pro' ); ?></label>
+									<select id="seoapw-post-status" class="seoapw-select" name="<?php echo esc_attr( $opt_name ); ?>[post_status]">
 										<option value="draft"   <?php selected( $opts['post_status'], 'draft' ); ?>><?php esc_html_e( 'Draft', 'seoautowrite-pro' ); ?></option>
 										<option value="publish" <?php selected( $opts['post_status'], 'publish' ); ?>><?php esc_html_e( 'Published', 'seoautowrite-pro' ); ?></option>
 										<option value="future"  <?php selected( $opts['post_status'], 'future' ); ?>><?php esc_html_e( 'Scheduled (future)', 'seoautowrite-pro' ); ?></option>
 									</select>
 								</div>
-								<div class="asaw-field-group">
-									<label for="asaw-author-id"><?php esc_html_e( 'Author', 'seoautowrite-pro' ); ?></label>
-									<select id="asaw-author-id" class="asaw-select" name="<?php echo esc_attr( $opt_name ); ?>[author_id]">
+								<div class="seoapw-field-group">
+									<label for="seoapw-author-id"><?php esc_html_e( 'Author', 'seoautowrite-pro' ); ?></label>
+									<select id="seoapw-author-id" class="seoapw-select" name="<?php echo esc_attr( $opt_name ); ?>[author_id]">
 										<?php foreach ( $authors as $user ) : ?>
 											<option value="<?php echo esc_attr( $user->ID ); ?>" <?php selected( $opts['author_id'], $user->ID ); ?>>
 												<?php echo esc_html( $user->display_name ); ?>
@@ -532,32 +532,32 @@ class ASAW_Settings {
 				</section>
 
 				<!-- ===================== LINKS & BACKLINKS ===================== -->
-				<section class="asaw-card">
-					<h2 class="asaw-card-title"><?php esc_html_e( 'Links &amp; Backlinks', 'seoautowrite-pro' ); ?></h2>
+				<section class="seoapw-card">
+					<h2 class="seoapw-card-title"><?php esc_html_e( 'Links &amp; Backlinks', 'seoautowrite-pro' ); ?></h2>
 
-					<div class="asaw-row">
-						<div class="asaw-label"><?php esc_html_e( 'Internal Links', 'seoautowrite-pro' ); ?></div>
-						<div class="asaw-control">
-							<label class="asaw-check-label">
+					<div class="seoapw-row">
+						<div class="seoapw-label"><?php esc_html_e( 'Internal Links', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-control">
+							<label class="seoapw-check-label">
 								<input type="checkbox" name="<?php echo esc_attr( $opt_name ); ?>[insert_internal_links]" value="1" <?php checked( $opts['insert_internal_links'] ); ?>>
 								<?php esc_html_e( 'Store internal link suggestions in post meta', 'seoautowrite-pro' ); ?>
 							</label>
 						</div>
 					</div>
 
-					<div class="asaw-row">
-						<label class="asaw-label" for="asaw-max-links"><?php esc_html_e( 'Max Internal Links', 'seoautowrite-pro' ); ?></label>
-						<div class="asaw-control">
-							<input type="number" id="asaw-max-links" class="asaw-input asaw-small" min="1" max="20"
+					<div class="seoapw-row">
+						<label class="seoapw-label" for="seoapw-max-links"><?php esc_html_e( 'Max Internal Links', 'seoautowrite-pro' ); ?></label>
+						<div class="seoapw-control">
+							<input type="number" id="seoapw-max-links" class="seoapw-input seoapw-small" min="1" max="20"
 								name="<?php echo esc_attr( $opt_name ); ?>[max_internal_links]"
 								value="<?php echo esc_attr( $opts['max_internal_links'] ); ?>">
 						</div>
 					</div>
 
-					<div class="asaw-row">
-						<div class="asaw-label"><?php esc_html_e( 'Backlink Brief', 'seoautowrite-pro' ); ?></div>
-						<div class="asaw-control">
-							<label class="asaw-check-label">
+					<div class="seoapw-row">
+						<div class="seoapw-label"><?php esc_html_e( 'Backlink Brief', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-control">
+							<label class="seoapw-check-label">
 								<input type="checkbox" name="<?php echo esc_attr( $opt_name ); ?>[include_backlink_brief_in_post]" value="1" <?php checked( $opts['include_backlink_brief_in_post'] ); ?>>
 								<?php esc_html_e( 'Add the backlink brief as an HTML section at the end of each post', 'seoautowrite-pro' ); ?>
 							</label>
@@ -566,13 +566,13 @@ class ASAW_Settings {
 				</section>
 
 				<!-- ===================== FEATURED IMAGE ===================== -->
-				<section class="asaw-card">
-					<h2 class="asaw-card-title"><?php esc_html_e( 'Featured Image', 'seoautowrite-pro' ); ?></h2>
+				<section class="seoapw-card">
+					<h2 class="seoapw-card-title"><?php esc_html_e( 'Featured Image', 'seoautowrite-pro' ); ?></h2>
 
-					<div class="asaw-row">
-						<div class="asaw-label"><?php esc_html_e( 'Image Mode', 'seoautowrite-pro' ); ?></div>
-						<div class="asaw-control">
-							<select id="asaw-image-mode" class="asaw-select" name="<?php echo esc_attr( $opt_name ); ?>[image_mode]">
+					<div class="seoapw-row">
+						<div class="seoapw-label"><?php esc_html_e( 'Image Mode', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-control">
+							<select id="seoapw-image-mode" class="seoapw-select" name="<?php echo esc_attr( $opt_name ); ?>[image_mode]">
 								<option value="disabled"    <?php selected( $opts['image_mode'], 'disabled' ); ?>><?php esc_html_e( 'Disabled', 'seoautowrite-pro' ); ?></option>
 								<option value="prompt_only" <?php selected( $opts['image_mode'], 'prompt_only' ); ?>><?php esc_html_e( 'Prompt only (store in meta)', 'seoautowrite-pro' ); ?></option>
 								<option value="generate"    <?php selected( $opts['image_mode'], 'generate' ); ?>><?php esc_html_e( 'Generate &amp; set as featured image', 'seoautowrite-pro' ); ?></option>
@@ -580,30 +580,30 @@ class ASAW_Settings {
 						</div>
 					</div>
 
-					<div class="asaw-row asaw-image-generate-row<?php echo 'generate' !== $opts['image_mode'] ? ' is-hidden' : ''; ?>">
-						<div class="asaw-label"><?php esc_html_e( 'Image Provider', 'seoautowrite-pro' ); ?></div>
-						<div class="asaw-control">
-							<select class="asaw-select" name="<?php echo esc_attr( $opt_name ); ?>[image_provider]">
+					<div class="seoapw-row seoapw-image-generate-row<?php echo 'generate' !== $opts['image_mode'] ? ' is-hidden' : ''; ?>">
+						<div class="seoapw-label"><?php esc_html_e( 'Image Provider', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-control">
+							<select class="seoapw-select" name="<?php echo esc_attr( $opt_name ); ?>[image_provider]">
 								<option value="none"   <?php selected( $opts['image_provider'], 'none' ); ?>><?php esc_html_e( 'None', 'seoautowrite-pro' ); ?></option>
 								<option value="openai" <?php selected( $opts['image_provider'], 'openai' ); ?>><?php esc_html_e( 'OpenAI DALL-E', 'seoautowrite-pro' ); ?></option>
 							</select>
 						</div>
 					</div>
 
-					<div class="asaw-row asaw-image-generate-row<?php echo 'generate' !== $opts['image_mode'] ? ' is-hidden' : ''; ?>">
-						<label class="asaw-label" for="asaw-image-api-key"><?php esc_html_e( 'Image API Key', 'seoautowrite-pro' ); ?></label>
-						<div class="asaw-control">
-							<input type="password" id="asaw-image-api-key" class="asaw-input"
+					<div class="seoapw-row seoapw-image-generate-row<?php echo 'generate' !== $opts['image_mode'] ? ' is-hidden' : ''; ?>">
+						<label class="seoapw-label" for="seoapw-image-api-key"><?php esc_html_e( 'Image API Key', 'seoautowrite-pro' ); ?></label>
+						<div class="seoapw-control">
+							<input type="password" id="seoapw-image-api-key" class="seoapw-input"
 								name="<?php echo esc_attr( $opt_name ); ?>[image_api_key]"
 								value="<?php echo esc_attr( $opts['image_api_key'] ); ?>"
 								autocomplete="new-password">
 						</div>
 					</div>
 
-					<div class="asaw-row asaw-image-generate-row<?php echo 'generate' !== $opts['image_mode'] ? ' is-hidden' : ''; ?>">
-						<label class="asaw-label" for="asaw-image-model"><?php esc_html_e( 'Image Model', 'seoautowrite-pro' ); ?></label>
-						<div class="asaw-control">
-							<input type="text" id="asaw-image-model" class="asaw-input"
+					<div class="seoapw-row seoapw-image-generate-row<?php echo 'generate' !== $opts['image_mode'] ? ' is-hidden' : ''; ?>">
+						<label class="seoapw-label" for="seoapw-image-model"><?php esc_html_e( 'Image Model', 'seoautowrite-pro' ); ?></label>
+						<div class="seoapw-control">
+							<input type="text" id="seoapw-image-model" class="seoapw-input"
 								name="<?php echo esc_attr( $opt_name ); ?>[image_model]"
 								value="<?php echo esc_attr( $opts['image_model'] ); ?>"
 								placeholder="dall-e-3">
@@ -612,13 +612,13 @@ class ASAW_Settings {
 				</section>
 
 				<!-- ===================== LOGGING ===================== -->
-				<section class="asaw-card">
-					<h2 class="asaw-card-title"><?php esc_html_e( 'Logging', 'seoautowrite-pro' ); ?></h2>
+				<section class="seoapw-card">
+					<h2 class="seoapw-card-title"><?php esc_html_e( 'Logging', 'seoautowrite-pro' ); ?></h2>
 
-					<div class="asaw-row">
-						<div class="asaw-label"><?php esc_html_e( 'Logging Level', 'seoautowrite-pro' ); ?></div>
-						<div class="asaw-control">
-							<select class="asaw-select" name="<?php echo esc_attr( $opt_name ); ?>[logging_level]">
+					<div class="seoapw-row">
+						<div class="seoapw-label"><?php esc_html_e( 'Logging Level', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-control">
+							<select class="seoapw-select" name="<?php echo esc_attr( $opt_name ); ?>[logging_level]">
 								<option value="error" <?php selected( $opts['logging_level'], 'error' ); ?>><?php esc_html_e( 'Error only', 'seoautowrite-pro' ); ?></option>
 								<option value="info"  <?php selected( $opts['logging_level'], 'info' ); ?>><?php esc_html_e( 'Info (recommended)', 'seoautowrite-pro' ); ?></option>
 								<option value="debug" <?php selected( $opts['logging_level'], 'debug' ); ?>><?php esc_html_e( 'Debug (verbose)', 'seoautowrite-pro' ); ?></option>
@@ -628,14 +628,14 @@ class ASAW_Settings {
 				</section>
 
 				<!-- ===================== CUSTOM PROMPT ===================== -->
-				<section class="asaw-card">
-					<h2 class="asaw-card-title"><?php esc_html_e( 'Custom Prompt', 'seoautowrite-pro' ); ?></h2>
+				<section class="seoapw-card">
+					<h2 class="seoapw-card-title"><?php esc_html_e( 'Custom Prompt', 'seoautowrite-pro' ); ?></h2>
 
-					<textarea id="asaw-custom-prompt" class="asaw-textarea"
+					<textarea id="seoapw-custom-prompt" class="seoapw-textarea"
 						name="<?php echo esc_attr( $opt_name ); ?>[custom_prompt]"
 						rows="18"
 					><?php echo esc_textarea( $opts['custom_prompt'] ); ?></textarea>
-					<p class="asaw-desc" style="margin-top:10px;">
+					<p class="seoapw-desc" style="margin-top:10px;">
 						<?php esc_html_e( 'Leave blank to use the built-in prompt. Available placeholders:', 'seoautowrite-pro' ); ?>
 						<code>{category_name}</code>, <code>{category_description}</code>, <code>{selected_topic}</code>,
 						<code>{min_words}</code>, <code>{max_words}</code>, <code>{tone}</code>, <code>{language}</code>,
@@ -643,8 +643,8 @@ class ASAW_Settings {
 					</p>
 				</section>
 
-				<div class="asaw-submit-row">
-					<button type="submit" class="asaw-save-btn">
+				<div class="seoapw-submit-row">
+					<button type="submit" class="seoapw-save-btn">
 						<?php esc_html_e( 'Save Settings', 'seoautowrite-pro' ); ?>
 					</button>
 				</div>
@@ -652,39 +652,39 @@ class ASAW_Settings {
 			</form>
 
 			<!-- ===================== LOGS + RUN NOW ===================== -->
-			<div class="asaw-action-panel">
-				<div class="asaw-action-panel-header">
+			<div class="seoapw-action-panel">
+				<div class="seoapw-action-panel-header">
 					<h2><?php esc_html_e( 'Recent Logs', 'seoautowrite-pro' ); ?></h2>
-					<div class="asaw-run-area">
-						<button id="asaw-run-now">
+					<div class="seoapw-run-area">
+						<button id="seoapw-run-now">
 							&#9654; <?php esc_html_e( 'Run Now', 'seoautowrite-pro' ); ?>
 						</button>
-						<span id="asaw-run-now-status"></span>
+						<span id="seoapw-run-now-status"></span>
 					</div>
 				</div>
 
-				<div class="asaw-logs-wrap">
-					<div class="asaw-logs-header">
+				<div class="seoapw-logs-wrap">
+					<div class="seoapw-logs-header">
 						<span><?php esc_html_e( 'Time', 'seoautowrite-pro' ); ?></span>
 						<span><?php esc_html_e( 'Level', 'seoautowrite-pro' ); ?></span>
 						<span><?php esc_html_e( 'Message', 'seoautowrite-pro' ); ?></span>
 					</div>
 
 					<?php if ( empty( $logs ) ) : ?>
-						<div class="asaw-no-logs"><?php esc_html_e( 'No log entries yet.', 'seoautowrite-pro' ); ?></div>
+						<div class="seoapw-no-logs"><?php esc_html_e( 'No log entries yet.', 'seoautowrite-pro' ); ?></div>
 					<?php else : ?>
 						<?php foreach ( $logs as $log ) : ?>
-							<div class="asaw-log-row">
-								<span class="asaw-log-time"><?php echo esc_html( $log['time'] ); ?></span>
+							<div class="seoapw-log-row">
+								<span class="seoapw-log-time"><?php echo esc_html( $log['time'] ); ?></span>
 								<span>
-									<span class="asaw-level-badge asaw-level-<?php echo esc_attr( $log['level'] ); ?>">
+									<span class="seoapw-level-badge seoapw-level-<?php echo esc_attr( $log['level'] ); ?>">
 										<?php echo esc_html( strtoupper( $log['level'] ) ); ?>
 									</span>
 								</span>
-								<span class="asaw-log-msg">
+								<span class="seoapw-log-msg">
 									<?php echo esc_html( $log['message'] ); ?>
 									<?php if ( ! empty( $log['context'] ) ) : ?>
-										<pre class="asaw-context"><?php echo esc_html( wp_json_encode( $log['context'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) ); ?></pre>
+										<pre class="seoapw-context"><?php echo esc_html( wp_json_encode( $log['context'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) ); ?></pre>
 									<?php endif; ?>
 								</span>
 							</div>
@@ -693,7 +693,7 @@ class ASAW_Settings {
 				</div>
 			</div>
 
-		</div><!-- .asaw-wrap -->
+		</div><!-- .seoapw-wrap -->
 		<?php
 	}
 }

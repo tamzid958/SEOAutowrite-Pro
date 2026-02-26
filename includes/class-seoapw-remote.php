@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Generate a Pro article by calling the remote server.
  *
- * Returns an article array matching the schema from ASAW_Utils::validate_schema(),
+ * Returns an article array matching the schema from SEOAPW_Utils::validate_schema(),
  * or WP_Error on any failure (including insufficient balance, invalid license,
  * network timeout). Callers should fall back to Ollama on WP_Error.
  *

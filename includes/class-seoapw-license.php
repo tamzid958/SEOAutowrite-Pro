@@ -60,7 +60,7 @@ function seoapw_validate_license( string $key ): array {
 				array(
 					'license_key'    => $key,
 					'site_url'       => home_url(),
-					'plugin_version' => ASAW_VERSION,
+					'plugin_version' => SEOAPW_VERSION,
 				)
 			),
 		)

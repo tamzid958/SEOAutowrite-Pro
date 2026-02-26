@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class ASAW_OpenAI_Image_Provider implements ASAW_Image_Provider_Interface {
+class SEOAPW_OpenAI_Image_Provider implements SEOAPW_Image_Provider_Interface {
 
 	public function generate_image( $prompt, array $options ) {
 		$api_key = sanitize_text_field( $options['image_api_key'] ?? '' );
