@@ -119,8 +119,9 @@ class SEOAPW_Generator {
 
 		// Pro generation check — skip Ollama entirely when Pro is active with
 		// sufficient balance. Falls back to Ollama silently on any failure.
-		$article        = null;
-		$is_pro_article = false;
+		$article              = null;
+		$is_pro_article       = false;
+		$pro_featured_img_url = null;
 
 		if (
 			function_exists( 'seoapw_is_pro' ) && seoapw_is_pro() &&
@@ -132,8 +133,9 @@ class SEOAPW_Generator {
 			if ( is_wp_error( $pro_result ) ) {
 				SEOAPW_Logger::info( 'Pro generation failed, falling back to Ollama: ' . $pro_result->get_error_message() );
 			} else {
-				$article        = $pro_result;
-				$is_pro_article = true;
+				$article              = $pro_result['article'];
+				$pro_featured_img_url = $pro_result['featured_image_url'] ?? null;
+				$is_pro_article       = true;
 				SEOAPW_Logger::info( 'Pro generation succeeded.' );
 			}
 		}
@@ -177,13 +179,29 @@ class SEOAPW_Generator {
 		}
 
 		// Step 11 — Featured image.
-		$image_provider = $this->resolve_image_provider();
-		$image_handler  = new SEOAPW_Image( $image_provider, $options );
-		$image_result   = $image_handler->handle( $post_id, $article['featured_image_prompt'] ?? '' );
+		if ( $is_pro_article && ! empty( $pro_featured_img_url ) ) {
+			// Server already generated the image — sideload it directly.
+			require_once ABSPATH . 'wp-admin/includes/media.php';
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			require_once ABSPATH . 'wp-admin/includes/image.php';
 
-		if ( is_wp_error( $image_result ) ) {
-			// Non-fatal: log and continue.
-			SEOAPW_Logger::error( 'Image handling error (non-fatal): ' . $image_result->get_error_message() );
+			$attachment_id = media_sideload_image( $pro_featured_img_url, $post_id, null, 'id' );
+
+			if ( is_wp_error( $attachment_id ) ) {
+				SEOAPW_Logger::error( 'Pro image sideload failed (non-fatal): ' . $attachment_id->get_error_message() );
+			} else {
+				set_post_thumbnail( $post_id, $attachment_id );
+				SEOAPW_Logger::info( "Pro featured image sideloaded for post {$post_id} (attachment ID: {$attachment_id})." );
+			}
+		} else {
+			// Free tier or Pro without server-side image — use local image provider.
+			$image_provider = $this->resolve_image_provider();
+			$image_handler  = new SEOAPW_Image( $image_provider, $options );
+			$image_result   = $image_handler->handle( $post_id, $article['featured_image_prompt'] ?? '' );
+
+			if ( is_wp_error( $image_result ) ) {
+				SEOAPW_Logger::error( 'Image handling error (non-fatal): ' . $image_result->get_error_message() );
+			}
 		}
 
 		// Step 12 — Store post meta.

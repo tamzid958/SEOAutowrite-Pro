@@ -34,7 +34,7 @@ class SEOAPW_Settings {
 	// -------------------------------------------------------------------------
 
 	public function add_menu() {
-		$menu_icon = SEOAPW_PLUGIN_URL . 'assets/logo.png';
+		$menu_icon = SEOAPW_PLUGIN_URL . 'assets/logo.svg';
 
 		add_menu_page(
 			__( 'SEOAutowrite Pro', 'seoautowrite-pro' ),

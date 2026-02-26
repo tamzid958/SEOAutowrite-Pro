@@ -59,6 +59,7 @@ function seoapw_generate_pro( array $options, WP_Term $category ) {
 			'append_backlink_brief' => ! empty( $options['include_backlink_brief_in_post'] ),
 			'include_faq'           => ! empty( $options['include_faq'] ),
 			'recent_titles'         => $recent_titles,
+			'image_mode'            => ( 'pro' === ( $options['image_mode'] ?? '' ) ),
 		),
 	);
 
@@ -136,7 +137,10 @@ function seoapw_generate_pro( array $options, WP_Term $category ) {
 		);
 	}
 
-	return $body['article'];
+	return array(
+		'article'            => $body['article'],
+		'featured_image_url' => $body['featured_image_url'] ?? null,
+	);
 }
 
 /**
