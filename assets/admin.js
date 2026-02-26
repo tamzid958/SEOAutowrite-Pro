@@ -42,7 +42,7 @@
 					$btn.prop( 'disabled', false );
 
 					if ( ! response.success || ! response.data.models.length ) {
-						$status.css( 'color', '#d63638' ).text(
+						$status.css( 'color', '#b91c1c' ).text(
 							( response.data && response.data.message )
 								? response.data.message
 								: asawAdmin.strings.noModels
@@ -50,7 +50,7 @@
 						return;
 					}
 
-					$status.css( 'color', '#46b450' ).text( '' );
+					$status.css( 'color', '' ).text( '' );
 
 					var html = '<ul style="margin:0;list-style:disc;padding-left:1.4em;">';
 					$.each( response.data.models, function ( i, model ) {
@@ -65,7 +65,7 @@
 				}
 			).fail( function () {
 				$btn.prop( 'disabled', false );
-				$status.css( 'color', '#d63638' ).text( asawAdmin.strings.error );
+				$status.css( 'color', '#b91c1c' ).text( asawAdmin.strings.error );
 			} );
 		} );
 
@@ -79,10 +79,12 @@
 		$( '#asaw-run-now' ).on( 'click', function ( e ) {
 			e.preventDefault();
 
-			var $btn    = $( this );
-			var $status = $( '#asaw-run-now-status' );
+			var $btn       = $( this );
+			var $status    = $( '#asaw-run-now-status' );
+			var runLabel   = '&#9654; ' + ( asawAdmin.strings.running || 'Running\u2026' );
+			var resetLabel = '&#9654; Run Now';
 
-			$btn.prop( 'disabled', true ).text( asawAdmin.strings.running );
+			$btn.prop( 'disabled', true ).html( runLabel );
 			$status.css( 'color', '' ).text( '' );
 
 			$.post(
@@ -92,16 +94,16 @@
 					nonce:  asawAdmin.runNonce,
 				},
 				function ( response ) {
-					$btn.prop( 'disabled', false ).text( 'Run Now' );
+					$btn.prop( 'disabled', false ).html( resetLabel );
 
 					if ( response.success ) {
-						$status.css( 'color', '#46b450' ).text(
+						$status.css( 'color', '#16a34a' ).text(
 							( response.data && response.data.message )
 								? response.data.message
 								: asawAdmin.strings.done
 						);
 					} else {
-						$status.css( 'color', '#d63638' ).text(
+						$status.css( 'color', '#b91c1c' ).text(
 							( response.data && response.data.message )
 								? response.data.message
 								: asawAdmin.strings.error
@@ -114,8 +116,8 @@
 					}, 2500 );
 				}
 			).fail( function () {
-				$btn.prop( 'disabled', false ).text( 'Run Now' );
-				$status.css( 'color', '#d63638' ).text( asawAdmin.strings.error );
+				$btn.prop( 'disabled', false ).html( resetLabel );
+				$status.css( 'color', '#b91c1c' ).text( asawAdmin.strings.error );
 			} );
 		} );
 

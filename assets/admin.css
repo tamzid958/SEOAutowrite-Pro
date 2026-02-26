@@ -1,186 +1,230 @@
-/* SEOAutowrite Pro - Admin UI */
+/* =========================================================
+   SEOAutowrite Pro – Admin UI
+   ========================================================= */
 
-:root {
-	--asaw-bg: #f5f7fb;
-	--asaw-panel: #ffffff;
-	--asaw-border: #d9e1ec;
-	--asaw-border-soft: #e9edf3;
-	--asaw-text: #1f2937;
-	--asaw-muted: #667085;
-	--asaw-heading: #0f172a;
-	--asaw-primary: #1f63d8;
-	--asaw-primary-strong: #174fb0;
-	--asaw-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-	--asaw-radius: 12px;
+/* Wrapper ------------------------------------------------- */
+.asaw-wrap {
+	max-width: 860px;
+	margin: 20px 0 40px;
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.asaw-settings {
-	max-width: 1240px;
-	margin: 18px 0;
-	padding: 18px 22px 26px;
-	background: linear-gradient(180deg, #fafcff 0%, var(--asaw-bg) 100%);
-	border: 1px solid var(--asaw-border-soft);
-	border-radius: 14px;
-}
-
-.asaw-settings .asaw-settings-title {
+/* Header -------------------------------------------------- */
+.asaw-header {
 	display: flex;
 	align-items: center;
-	gap: 10px;
-	margin-bottom: 14px;
+	gap: 14px;
+	padding-bottom: 24px;
+	border-bottom: 1px solid #e2e8f0;
+	margin-bottom: 28px;
 }
 
-.asaw-settings h1 {
-	margin: 0;
-	font-size: 34px;
-	line-height: 1.2;
-	font-weight: 700;
-	letter-spacing: -0.01em;
-	color: var(--asaw-heading);
-}
-
-.asaw-settings .asaw-settings-logo {
-	width: 34px;
-	height: 34px;
-	border-radius: 8px;
-	object-fit: contain;
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
-}
-
-.asaw-settings-form {
-	max-width: 1160px;
-}
-
-.asaw-settings h2.title {
-	margin: 24px 0 8px;
-	padding: 0;
-	border: 0;
-	font-size: 24px;
-	line-height: 1.2;
-	font-weight: 700;
-	letter-spacing: -0.01em;
-	color: #111827;
-}
-
-.asaw-settings h2.title + .form-table {
-	margin-top: 0;
-	width: 100%;
-	background: var(--asaw-panel);
-	border: 1px solid var(--asaw-border);
-	border-radius: var(--asaw-radius);
-	padding: 6px 18px;
-	box-shadow: var(--asaw-shadow);
-	border-collapse: separate;
-}
-
-.asaw-settings .form-table tbody,
-.asaw-settings .form-table tr,
-.asaw-settings .form-table th,
-.asaw-settings .form-table td {
-	background: transparent;
-}
-
-.asaw-settings .form-table th,
-.asaw-settings .form-table td {
-	padding-top: 12px;
-	padding-bottom: 12px;
-	border-bottom: 1px solid var(--asaw-border-soft);
-}
-
-.asaw-settings .form-table tr:last-child th,
-.asaw-settings .form-table tr:last-child td {
-	border-bottom: 0;
-}
-
-.asaw-settings .form-table th {
-	width: 230px;
-	padding-right: 16px;
-	font-size: 15px;
-	line-height: 1.4;
-	font-weight: 600;
-	color: #1f2937;
-	vertical-align: top;
-}
-
-.asaw-settings .form-table td {
-	font-size: 14px;
-	color: var(--asaw-text);
-}
-
-.asaw-settings .form-table input[type="text"],
-.asaw-settings .form-table input[type="url"],
-.asaw-settings .form-table input[type="password"],
-.asaw-settings .form-table input[type="number"],
-.asaw-settings .form-table input[type="time"],
-.asaw-settings .form-table select,
-.asaw-settings .form-table textarea {
-	width: 100%;
-	max-width: 620px;
+.asaw-header-icon {
+	width: 40px;
 	height: 40px;
-	padding: 7px 12px;
-	font-size: 14px;
-	line-height: 1.4;
-	color: #111827;
-	background: #fbfdff;
-	border: 1px solid #c9d3e2;
 	border-radius: 10px;
+	object-fit: contain;
 }
 
-.asaw-settings .form-table textarea {
-	height: auto;
-	min-height: 260px;
+.asaw-header h1 {
+	margin: 0;
+	font-size: 26px;
+	font-weight: 700;
+	color: #0f172a;
+	letter-spacing: -0.02em;
+	line-height: 1.2;
 }
 
-.asaw-settings .form-table input:focus,
-.asaw-settings .form-table select:focus,
-.asaw-settings .form-table textarea:focus {
-	outline: none;
-	border-color: var(--asaw-primary);
-	box-shadow: 0 0 0 3px rgba(31, 99, 216, 0.14);
+/* Card sections ------------------------------------------- */
+.asaw-card {
+	background: #ffffff;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+	padding: 22px 24px;
+	margin-bottom: 20px;
 }
 
-.asaw-settings .form-table .description {
-	margin-top: 8px;
-	font-size: 13px;
-	line-height: 1.45;
-	color: var(--asaw-muted);
-	max-width: 760px;
+.asaw-card-title {
+	font-size: 15px !important;
+	font-weight: 600 !important;
+	color: #0f172a !important;
+	margin: 0 0 18px !important;
+	padding: 0 !important;
+	border: 0 !important;
 }
 
-.asaw-inline-fields {
+/* Form rows ----------------------------------------------- */
+.asaw-row {
 	display: grid;
+	grid-template-columns: 190px 1fr;
 	gap: 12px;
+	align-items: start;
+	padding: 12px 0;
+	border-bottom: 1px solid #f1f5f9;
 }
 
-.asaw-inline-fields.asaw-two-col {
-	grid-template-columns: repeat(2, minmax(220px, 1fr));
-	max-width: 760px;
+.asaw-row:last-child {
+	border-bottom: 0;
+	padding-bottom: 0;
 }
 
-.asaw-field label {
-	display: block;
-	margin-bottom: 5px;
+.asaw-row:first-child {
+	padding-top: 0;
+}
+
+.asaw-row.is-hidden {
+	display: none;
+}
+
+.asaw-label {
 	font-size: 13px;
-	font-weight: 600;
-	color: #334155;
+	font-weight: 500;
+	color: #475569;
+	padding-top: 8px;
+	line-height: 1.4;
 }
 
-.asaw-field input,
-.asaw-field select {
-	max-width: 100%;
-}
-
-/* Fix WordPress .small-text squeezing inside grouped rows */
-.asaw-settings .asaw-field .small-text,
-.asaw-settings .asaw-inline-fields input.small-text,
-.asaw-settings .asaw-inline-fields select.small-text {
-	width: 100%;
-	max-width: 100%;
+.asaw-control {
+	flex: 1;
 	min-width: 0;
 }
 
-.asaw-settings .form-table .small-text {
-	max-width: 180px;
+/* Inputs -------------------------------------------------- */
+.asaw-input,
+.asaw-select {
+	display: block;
+	width: 100%;
+	max-width: 460px;
+	padding: 7px 11px;
+	font-size: 13px;
+	color: #0f172a;
+	background: #ffffff;
+	border: 1px solid #cbd5e1;
+	border-radius: 8px;
+	line-height: 1.5;
+	height: 36px;
+	font-family: inherit;
+	box-sizing: border-box;
+	transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.asaw-input:focus,
+.asaw-select:focus {
+	outline: none;
+	border-color: #2563eb;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.asaw-input.asaw-mono {
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 12px;
+}
+
+.asaw-input.asaw-small {
+	max-width: 110px;
+}
+
+.asaw-textarea {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	padding: 12px;
+	font-size: 12px;
+	font-family: 'Courier New', Courier, monospace;
+	color: #0f172a;
+	background: #ffffff;
+	border: 1px solid #cbd5e1;
+	border-radius: 8px;
+	line-height: 1.6;
+	min-height: 200px;
+	resize: vertical;
+	box-sizing: border-box;
+	transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.asaw-textarea:focus {
+	outline: none;
+	border-color: #2563eb;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.asaw-select[multiple] {
+	height: auto;
+	min-height: 130px;
+}
+
+/* Description text ---------------------------------------- */
+.asaw-desc {
+	font-size: 12px;
+	color: #64748b;
+	margin: 6px 0 0;
+	line-height: 1.5;
+}
+
+.asaw-desc code {
+	background: #f1f5f9;
+	padding: 1px 5px;
+	border-radius: 4px;
+	font-size: 11px;
+	color: #1e293b;
+	font-family: 'Courier New', Courier, monospace;
+}
+
+/* Checkbox label ------------------------------------------ */
+.asaw-check-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	color: #334155;
+	cursor: pointer;
+	margin-top: 6px;
+	font-family: inherit;
+}
+
+.asaw-check-label input[type="checkbox"] {
+	width: 15px;
+	height: 15px;
+	border-radius: 4px;
+	accent-color: #2563eb;
+	cursor: pointer;
+	flex-shrink: 0;
+}
+
+/* Two-column field groups --------------------------------- */
+.asaw-grid-2 {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 14px;
+	max-width: 460px;
+}
+
+.asaw-field-group label {
+	display: block;
+	font-size: 11px;
+	font-weight: 600;
+	color: #334155;
+	margin-bottom: 5px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.asaw-field-group .asaw-input,
+.asaw-field-group .asaw-select {
+	max-width: 100%;
+}
+
+/* Model fetch inline -------------------------------------- */
+.asaw-model-row {
+	display: flex;
+	gap: 8px;
+	max-width: 460px;
+}
+
+.asaw-model-row .asaw-input {
+	flex: 1;
+	max-width: 100%;
 }
 
 .asaw-inline-actions {
@@ -188,217 +232,291 @@
 	align-items: center;
 	gap: 8px;
 	margin-top: 8px;
-	flex-wrap: wrap;
 }
 
-.asaw-inline-actions .button {
-	height: 38px;
-	padding: 0 14px;
-	border-radius: 10px;
-	border-color: #b8c6dc;
-	font-size: 13px;
-	font-weight: 600;
-	color: #184b93;
-	background: #e9f2ff;
-}
-
-#asaw-fetch-models-status {
-	font-size: 13px;
-	font-weight: 600;
-}
-
-.asaw-models-list {
-	display: none;
-	margin-top: 8px;
-	padding: 8px 10px;
-	border: 1px dashed #cbdaef;
-	border-radius: 10px;
-	background: #f8fbff;
-}
-
-.asaw-categories-select,
-.asaw-settings select[multiple] {
-	max-width: 620px;
-	min-height: 150px;
-}
-
-.asaw-settings .form-table td > label {
+.asaw-btn {
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
-	font-size: 14px;
+	gap: 6px;
+	padding: 6px 14px;
+	font-size: 13px;
+	font-weight: 500;
+	border-radius: 8px;
+	border: 1px solid #cbd5e1;
+	background: #ffffff;
+	color: #334155;
+	cursor: pointer;
+	font-family: inherit;
+	height: 36px;
+	transition: background 0.15s, border-color 0.15s;
+	white-space: nowrap;
+}
+
+.asaw-btn:hover {
+	background: #f8fafc;
+	border-color: #94a3b8;
+}
+
+.asaw-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.asaw-btn-status {
+	font-size: 12px;
 	font-weight: 500;
 }
 
-.asaw-prompt-textarea {
-	font-family: Consolas, "Courier New", monospace;
-	white-space: pre;
+/* Models list --------------------------------------------- */
+.asaw-models-list {
+	display: none;
+	margin-top: 8px;
+	padding: 10px 14px;
+	border: 1px dashed #cbd5e1;
+	border-radius: 8px;
+	background: #f8fafc;
+	font-size: 13px;
+	max-width: 460px;
 }
 
-.asaw-settings .submit {
-	margin-top: 18px;
+.asaw-models-list ul {
+	margin: 0;
+	padding-left: 1.3em;
 }
 
-.asaw-settings .submit .button-primary {
-	height: 40px;
-	padding: 0 16px;
-	border-radius: 10px;
+.asaw-models-list a {
+	color: #2563eb;
+	text-decoration: none;
+}
+
+.asaw-models-list a:hover {
+	text-decoration: underline;
+}
+
+/* Save button --------------------------------------------- */
+.asaw-submit-row {
+	padding-top: 8px;
+	margin-bottom: 32px;
+}
+
+.asaw-save-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 28px;
 	font-size: 14px;
 	font-weight: 600;
-	background: var(--asaw-primary);
-	border-color: var(--asaw-primary);
+	color: #ffffff;
+	background: #2563eb;
+	border: 1px solid #2563eb;
+	border-radius: 8px;
+	cursor: pointer;
+	font-family: inherit;
+	transition: background 0.15s, box-shadow 0.15s;
 }
 
-.asaw-settings .submit .button-primary:hover,
-.asaw-settings .submit .button-primary:focus {
-	background: var(--asaw-primary-strong);
-	border-color: var(--asaw-primary-strong);
+.asaw-save-btn:hover {
+	background: #1d4ed8;
+	border-color: #1d4ed8;
 }
 
-.asaw-panel {
-	margin-top: 18px;
-	padding: 14px 18px;
-	background: var(--asaw-panel);
-	border: 1px solid var(--asaw-border);
-	border-radius: var(--asaw-radius);
-	box-shadow: var(--asaw-shadow);
+.asaw-save-btn:focus {
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.22);
 }
 
-.asaw-panel h2 {
-	margin: 0 0 10px;
-	font-size: 22px;
-	line-height: 1.25;
-	font-weight: 700;
-	color: #111827;
+/* Logs action panel --------------------------------------- */
+.asaw-action-panel {
+	background: #ffffff;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+	padding: 20px 24px;
+	margin-bottom: 24px;
+}
+
+.asaw-action-panel-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 16px;
+}
+
+.asaw-action-panel-header h2 {
+	font-size: 17px !important;
+	font-weight: 700 !important;
+	color: #0f172a !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+}
+
+.asaw-run-area {
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
 #asaw-run-now {
-	height: 38px;
-	padding: 0 14px;
-	border-radius: 10px;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 7px 16px;
 	font-size: 13px;
 	font-weight: 600;
+	color: #ffffff;
+	background: #0f172a;
+	border: 1px solid #0f172a;
+	border-radius: 8px;
+	cursor: pointer;
+	font-family: inherit;
+	transition: background 0.15s;
+}
+
+#asaw-run-now:hover {
+	background: #1e293b;
+}
+
+#asaw-run-now:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
 }
 
 #asaw-run-now-status {
-	margin-left: 10px;
-	font-weight: 600;
-	font-size: 13px;
+	font-size: 12px;
+	font-weight: 500;
 }
 
-.asaw-logs-table {
-	margin-top: 10px;
-	width: 100%;
-	border-collapse: separate;
-	border-spacing: 0;
-	border: 1px solid #d6e0ef;
-	border-radius: 10px;
+/* Logs table ---------------------------------------------- */
+.asaw-logs-wrap {
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
 	overflow: hidden;
 }
 
-.asaw-logs-table th,
-.asaw-logs-table td {
-	padding: 9px 11px;
-	font-size: 13px;
-	vertical-align: top;
-}
-
-.asaw-logs-table thead th {
-	background: #eef4fd;
-	font-weight: 700;
-	color: #1e2f49;
-}
-
-.asaw-log-error {
-	background: #fff4f4;
-}
-
-.asaw-log-info {
-	background: #f4f8ff;
-}
-
-.asaw-log-debug {
+.asaw-logs-header {
 	background: #f8fafc;
+	border-bottom: 1px solid #e2e8f0;
+	padding: 10px 16px;
+	display: grid;
+	grid-template-columns: 155px 80px 1fr;
+	font-size: 11px;
+	font-weight: 700;
+	color: #64748b;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.asaw-log-row {
+	display: grid;
+	grid-template-columns: 155px 80px 1fr;
+	padding: 11px 16px;
+	border-bottom: 1px solid #f1f5f9;
+	font-size: 13px;
+	align-items: start;
+	transition: background 0.1s;
+}
+
+.asaw-log-row:last-child {
+	border-bottom: 0;
+}
+
+.asaw-log-row:hover {
+	background: #f8fafc;
+}
+
+.asaw-log-time {
+	font-size: 11px;
+	color: #94a3b8;
+	font-family: 'Courier New', Courier, monospace;
+	padding-top: 2px;
 }
 
 .asaw-level-badge {
 	display: inline-block;
 	padding: 2px 7px;
-	border-radius: 999px;
+	border-radius: 4px;
 	font-size: 10px;
 	font-weight: 700;
-	letter-spacing: 0.04em;
-	color: #fff;
-	background: #94a3b8;
+	letter-spacing: 0.05em;
 }
 
-.asaw-log-error .asaw-level-badge {
-	background: #d63638;
-}
+.asaw-level-info  { background: #dbeafe; color: #1d4ed8; }
+.asaw-level-error { background: #fee2e2; color: #b91c1c; }
+.asaw-level-debug { background: #f1f5f9; color: #475569; }
 
-.asaw-log-info .asaw-level-badge {
-	background: #1858bf;
-}
-
-.asaw-log-debug .asaw-level-badge {
-	background: #64748b;
+.asaw-log-msg {
+	color: #334155;
+	font-weight: 500;
+	word-break: break-word;
 }
 
 .asaw-context {
 	margin: 6px 0 0;
-	padding: 8px 10px;
-	font-size: 12px;
-	background: rgba(0, 0, 0, 0.04);
-	border-left: 3px solid #c6d0e0;
+	padding: 7px 10px;
+	font-size: 11px;
+	background: rgba(0, 0, 0, 0.03);
+	border-left: 3px solid #cbd5e1;
 	border-radius: 4px;
 	white-space: pre-wrap;
 	word-break: break-all;
-	max-height: 220px;
+	max-height: 200px;
 	overflow-y: auto;
+	font-family: 'Courier New', Courier, monospace;
 }
 
-@media (max-width: 960px) {
-	.asaw-settings h1 {
-		font-size: 30px;
-	}
+.asaw-no-logs {
+	padding: 24px 16px;
+	color: #94a3b8;
+	font-size: 13px;
+	text-align: center;
+}
 
-	.asaw-settings h2.title {
-		font-size: 22px;
-	}
-
-	.asaw-settings .form-table th {
-		width: 210px;
+/* Responsive ---------------------------------------------- */
+@media (max-width: 900px) {
+	.asaw-wrap {
+		max-width: 100%;
 	}
 }
 
 @media (max-width: 782px) {
-	.asaw-settings {
-		padding: 14px;
+	.asaw-row {
+		grid-template-columns: 1fr;
+		gap: 4px;
 	}
 
-	.asaw-settings .form-table th,
-	.asaw-settings .form-table td {
-		padding-top: 10px;
-		padding-bottom: 10px;
-		border-bottom: 0;
+	.asaw-label {
+		padding-top: 0;
+		font-weight: 600;
 	}
 
-	.asaw-settings .form-table input[type="text"],
-	.asaw-settings .form-table input[type="url"],
-	.asaw-settings .form-table input[type="password"],
-	.asaw-settings .form-table input[type="number"],
-	.asaw-settings .form-table input[type="time"],
-	.asaw-settings .form-table select,
-	.asaw-settings .form-table textarea {
-		max-width: 100%;
-	}
-
-	.asaw-inline-fields.asaw-two-col {
+	.asaw-grid-2 {
 		grid-template-columns: 1fr;
 		max-width: 100%;
 	}
 
-	.asaw-settings .form-table .small-text {
+	.asaw-input,
+	.asaw-select {
 		max-width: 100%;
+	}
+
+	.asaw-model-row {
+		max-width: 100%;
+	}
+
+	.asaw-logs-header,
+	.asaw-log-row {
+		grid-template-columns: 1fr;
+		gap: 4px;
+	}
+
+	.asaw-logs-header span:not(:first-child) {
+		display: none;
+	}
+
+	.asaw-action-panel-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 12px;
 	}
 }
