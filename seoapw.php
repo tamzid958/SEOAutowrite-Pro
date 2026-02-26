@@ -3,7 +3,7 @@
  * Plugin Name:       SEOAutowrite Pro
  * Plugin URI:        https://seoautowrite.pro
  * Description:       AI-powered WordPress article writer with SEO optimisation, scheduled publishing, backlink briefs, FAQ schema, and featured image generation via Ollama.
- * Version:           1.0.1
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Tested up to:      6.9
  * Requires PHP:      7.4
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SEOAPW_VERSION', '1.0.1' );
+define( 'SEOAPW_VERSION', '1.1.0' );
 define( 'SEOAPW_PLUGIN_FILE', __FILE__ );
 define( 'SEOAPW_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SEOAPW_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -54,15 +54,6 @@ require_once SEOAPW_PLUGIN_DIR . 'includes/class-seoapw-upsell.php';
 // Activation / deactivation hooks.
 register_activation_hook( __FILE__, array( 'SEOAPW_Plugin', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'SEOAPW_Plugin', 'deactivate' ) );
-
-// Load translations.
-add_action( 'init', static function () {
-	load_plugin_textdomain(
-		'seoautowrite-pro',
-		false,
-		dirname( plugin_basename( __FILE__ ) ) . '/languages'
-	);
-} );
 
 // Boot the plugin on plugins_loaded so all WP functions are available.
 add_action( 'plugins_loaded', array( 'SEOAPW_Plugin', 'get_instance' ) );
