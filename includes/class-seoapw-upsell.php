@@ -51,7 +51,7 @@ class SEOAPW_Upsell {
 			return;
 		}
 
-		$buy_url = SEOAPW_API_URL . '/topup';
+		$buy_url = SEOAPW_API_URL . '/get-started';
 		?>
 		<div id="seoapw-upgrade-modal" class="seoapw-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="seoapw-modal-title">
 			<div class="seoapw-modal__backdrop"></div>
