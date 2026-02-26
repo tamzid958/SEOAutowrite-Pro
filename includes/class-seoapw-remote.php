@@ -24,7 +24,7 @@ function seoapw_generate_pro( array $options, WP_Term $category ) {
 	$key = get_option( 'seoapw_license_key', '' );
 
 	if ( empty( $key ) ) {
-		return new WP_Error( 'no_license', __( 'No Pro license key configured.', 'seoapw' ) );
+		return new WP_Error( 'no_license', __( 'No Pro license key configured.', 'seoautowrite-pro' ) );
 	}
 
 	// Fetch recent titles for duplicate-topic prevention (same logic as free tier).
@@ -77,7 +77,7 @@ function seoapw_generate_pro( array $options, WP_Term $category ) {
 			'request_failed',
 			sprintf(
 				/* translators: %s: HTTP error message */
-				__( 'Pro API request failed: %s', 'seoapw' ),
+				__( 'Pro API request failed: %s', 'seoautowrite-pro' ),
 				$response->get_error_message()
 			)
 		);
@@ -93,17 +93,17 @@ function seoapw_generate_pro( array $options, WP_Term $category ) {
 		seoapw_queue_admin_notice( 'zero_balance', array( 'top_up_url' => $top_up_url ) );
 		return new WP_Error(
 			'insufficient_balance',
-			__( 'Insufficient Pro balance. Falling back to Ollama.', 'seoapw' )
+			__( 'Insufficient Pro balance. Falling back to Ollama.', 'seoautowrite-pro' )
 		);
 	}
 
 	if ( 403 === $code ) {
 		seoapw_invalidate_license_transient();
-		return new WP_Error( 'invalid_license', __( 'Pro license is invalid or expired. Falling back to Ollama.', 'seoapw' ) );
+		return new WP_Error( 'invalid_license', __( 'Pro license is invalid or expired. Falling back to Ollama.', 'seoautowrite-pro' ) );
 	}
 
 	if ( 200 !== $code || empty( $body['success'] ) || empty( $body['article'] ) || ! is_array( $body['article'] ) ) {
-		return new WP_Error( 'generation_failed', __( 'Pro generation failed. Falling back to Ollama.', 'seoapw' ) );
+		return new WP_Error( 'generation_failed', __( 'Pro generation failed. Falling back to Ollama.', 'seoautowrite-pro' ) );
 	}
 
 	// Cache balance info for post-meta storage and invalidate license status so
