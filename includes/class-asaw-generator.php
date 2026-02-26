@@ -36,13 +36,23 @@ class ASAW_Generator {
 			return;
 		}
 
-		if (
-			empty( $this->options['ollama_api_key'] ) ||
-			empty( $this->options['ollama_endpoint'] ) ||
-			empty( $this->options['ollama_model'] )
-		) {
-			ASAW_Logger::error( 'Generator aborted: Ollama API key, endpoint, or model is not configured.' );
-			return;
+		// Pro users with sufficient balance do not need Ollama configured — the
+		// remote server handles generation. Ollama config is only required when
+		// the free tier (or Pro fallback) will actually call the local API.
+		$is_pro_ready = function_exists( 'seoapw_is_pro' )
+			&& seoapw_is_pro()
+			&& function_exists( 'seoapw_has_sufficient_balance' )
+			&& seoapw_has_sufficient_balance();
+
+		if ( ! $is_pro_ready ) {
+			if (
+				empty( $this->options['ollama_api_key'] ) ||
+				empty( $this->options['ollama_endpoint'] ) ||
+				empty( $this->options['ollama_model'] )
+			) {
+				ASAW_Logger::error( 'Generator aborted: Ollama API key, endpoint, or model is not configured.' );
+				return;
+			}
 		}
 
 		// Step 2 — Acquire concurrency lock.
@@ -107,13 +117,36 @@ class ASAW_Generator {
 			ASAW_Logger::info( 'Recent titles fetched for deduplication.', array( 'titles' => $recent_titles ) );
 		}
 
-		// Steps 5–8 — Build prompt, call Ollama, parse, validate (all inside provider).
-		$provider = new ASAW_Ollama_Provider( $options );
-		$article  = $provider->generate_article( array(
-			'category_name'        => $cat_name,
-			'category_description' => $cat_desc,
-			'recent_titles'        => $recent_titles,
-		) );
+		// Pro generation check — skip Ollama entirely when Pro is active with
+		// sufficient balance. Falls back to Ollama silently on any failure.
+		$article        = null;
+		$is_pro_article = false;
+
+		if (
+			function_exists( 'seoapw_is_pro' ) && seoapw_is_pro() &&
+			function_exists( 'seoapw_has_sufficient_balance' ) && seoapw_has_sufficient_balance()
+		) {
+			ASAW_Logger::info( 'Pro license detected — attempting Pro generation.' );
+			$pro_result = seoapw_generate_pro( $options, $category );
+
+			if ( is_wp_error( $pro_result ) ) {
+				ASAW_Logger::info( 'Pro generation failed, falling back to Ollama: ' . $pro_result->get_error_message() );
+			} else {
+				$article        = $pro_result;
+				$is_pro_article = true;
+				ASAW_Logger::info( 'Pro generation succeeded.' );
+			}
+		}
+
+		if ( null === $article ) {
+			// Steps 5–8 — Build prompt, call Ollama, parse, validate (all inside provider).
+			$provider = new ASAW_Ollama_Provider( $options );
+			$article  = $provider->generate_article( array(
+				'category_name'        => $cat_name,
+				'category_description' => $cat_desc,
+				'recent_titles'        => $recent_titles,
+			) );
+		}
 
 		if ( is_wp_error( $article ) ) {
 			ASAW_Logger::error( 'Article generation failed: ' . $article->get_error_message() );
@@ -136,6 +169,11 @@ class ASAW_Generator {
 		// Step 10 — Store internal link suggestions.
 		if ( ! empty( $options['insert_internal_links'] ) && ! empty( $article['internal_link_suggestions'] ) ) {
 			update_post_meta( $post_id, '_asaw_internal_link_suggestions', wp_json_encode( $article['internal_link_suggestions'] ) );
+		}
+
+		// Pro-specific post meta (generated_at timestamp, balance after, Pro internal links).
+		if ( $is_pro_article && function_exists( 'seoapw_save_pro_post_meta' ) ) {
+			seoapw_save_pro_post_meta( $post_id, $article, $options );
 		}
 
 		// Step 11 — Featured image.

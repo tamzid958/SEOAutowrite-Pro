@@ -269,13 +269,24 @@ class ASAW_Settings {
 
 			<!-- Header -->
 			<div class="asaw-header">
-				<img src="<?php echo esc_url( ASAW_PLUGIN_URL . 'assets/logo.png' ); ?>"
-				     alt="<?php esc_attr_e( 'SEOAutowrite Pro', 'seoautowrite-pro' ); ?>"
-				     class="asaw-header-icon">
-				<h1><?php esc_html_e( 'SEOAutowrite Pro', 'seoautowrite-pro' ); ?></h1>
+				<?php
+				/**
+				 * Hook: seoapw_admin_header_after_title
+				 * Pro UI uses this to render the balance indicator or upsell banner.
+				 */
+				do_action( 'seoapw_admin_header_after_title' );
+				?>
 			</div>
 
 			<?php settings_errors( self::SETTINGS_GROUP ); ?>
+
+			<?php
+			/**
+			 * Hook: seoapw_before_settings_form
+			 * Pro UI uses this to render the License card and upgrade modal.
+			 */
+			do_action( 'seoapw_before_settings_form' );
+			?>
 
 			<form method="post" action="options.php">
 				<?php settings_fields( self::SETTINGS_GROUP ); ?>

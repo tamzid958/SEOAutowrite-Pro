@@ -25,6 +25,12 @@ define( 'ASAW_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ASAW_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'ASAW_TEXT_DOMAIN', 'seoautowrite-pro' );
 
+/**
+ * Pro API server URL. Override in wp-config.php via:
+ *   define( 'SEOAPW_CUSTOM_API_URL', 'https://your-server.com' );
+ */
+define( 'SEOAPW_API_URL', defined( 'SEOAPW_CUSTOM_API_URL' ) ? SEOAPW_CUSTOM_API_URL : 'https://api.seoautowrite.pro' );
+
 // Load all classes.
 require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-logger.php';
 require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-utils.php';
@@ -38,6 +44,12 @@ require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-generator.php';
 require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-cron.php';
 require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-settings.php';
 require_once ASAW_PLUGIN_DIR . 'includes/class-asaw-plugin.php';
+
+// Pro features — loaded after free-tier classes so they can extend/hook safely.
+require_once ASAW_PLUGIN_DIR . 'includes/class-seoapw-license.php';
+require_once ASAW_PLUGIN_DIR . 'includes/class-seoapw-remote.php';
+require_once ASAW_PLUGIN_DIR . 'includes/class-seoapw-pro-ui.php';
+require_once ASAW_PLUGIN_DIR . 'includes/class-seoapw-upsell.php';
 
 // Activation / deactivation hooks.
 register_activation_hook( __FILE__, array( 'ASAW_Plugin', 'activate' ) );
