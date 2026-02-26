@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class ASAW_Utils {
+class SEOAPW_Utils {
 
 	/**
 	 * Build the full prompt to send to Ollama.
@@ -194,9 +194,9 @@ Provide:
 
 === FEATURED IMAGE ===
 
-Provide a detailed, photo-realistic featured image prompt:
-- No embedded text in image
-- Describe scene, lighting, environment, subject, camera type, depth of field
+Provide a simple, general image prompt:
+- No text in the image
+- Briefly describe the subject and setting in one or two sentences
 
 === OUTPUT FORMAT ===
 

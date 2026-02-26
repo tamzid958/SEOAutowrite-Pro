@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-interface ASAW_Image_Provider_Interface {
+interface SEOAPW_Image_Provider_Interface {
 
 	/**
 	 * Generate an image from a text prompt.

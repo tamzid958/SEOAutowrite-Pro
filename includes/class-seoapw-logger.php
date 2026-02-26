@@ -7,9 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class ASAW_Logger {
+class SEOAPW_Logger {
 
-	const OPTION_KEY = 'asaw_logs';
+	const OPTION_KEY = 'seoapw_logs';
 	const MAX_LOGS   = 100;
 
 	/**
@@ -45,7 +45,7 @@ class ASAW_Logger {
 	}
 
 	public static function debug( $message, $context = array() ) {
-		$options = get_option( 'asaw_options', array() );
+		$options = get_option( 'seoapw_options', array() );
 		$level   = isset( $options['logging_level'] ) ? $options['logging_level'] : 'info';
 		if ( 'debug' === $level ) {
 			self::log( 'debug', $message, $context );

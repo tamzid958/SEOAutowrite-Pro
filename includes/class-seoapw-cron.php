@@ -7,9 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class ASAW_Cron {
+class SEOAPW_Cron {
 
-	const HOOK = 'asaw_generate_scheduled_post';
+	const HOOK = 'seoapw_generate_scheduled_post';
 
 	// -------------------------------------------------------------------------
 	// Init
@@ -25,9 +25,9 @@ class ASAW_Cron {
 	// -------------------------------------------------------------------------
 
 	public function run_generation() {
-		$options   = get_option( 'asaw_options', array() );
-		$options   = wp_parse_args( $options, ASAW_Utils::get_default_options() );
-		$generator = new ASAW_Generator( $options );
+		$options   = get_option( 'seoapw_options', array() );
+		$options   = wp_parse_args( $options, SEOAPW_Utils::get_default_options() );
+		$generator = new SEOAPW_Generator( $options );
 		$generator->run();
 	}
 
@@ -36,19 +36,19 @@ class ASAW_Cron {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Register the 'asaw_custom' schedule interval.
+	 * Register the 'seoapw_custom' schedule interval.
 	 *
 	 * @param array $schedules
 	 * @return array
 	 */
 	public function add_custom_schedules( $schedules ) {
-		$options        = get_option( 'asaw_options', array() );
+		$options        = get_option( 'seoapw_options', array() );
 		$custom_minutes = max( 1, intval( $options['schedule_custom_minutes'] ?? 1440 ) );
 
-		$schedules['asaw_custom'] = array(
+		$schedules['seoapw_custom'] = array(
 			'interval' => $custom_minutes * MINUTE_IN_SECONDS,
 			/* translators: %d is the number of minutes */
-			'display'  => sprintf( __( 'Every %d minutes (ASAW)', 'seoautowrite-pro' ), $custom_minutes ),
+			'display'  => sprintf( __( 'Every %d minutes (SEOAPW)', 'seoautowrite-pro' ), $custom_minutes ),
 		);
 
 		return $schedules;
@@ -69,8 +69,8 @@ class ASAW_Cron {
 		wp_clear_scheduled_hook( self::HOOK );
 
 		if ( null === $options ) {
-			$options = get_option( 'asaw_options', array() );
-			$options = wp_parse_args( $options, ASAW_Utils::get_default_options() );
+			$options = get_option( 'seoapw_options', array() );
+			$options = wp_parse_args( $options, SEOAPW_Utils::get_default_options() );
 		}
 
 		if ( empty( $options['enabled'] ) ) {
@@ -82,7 +82,7 @@ class ASAW_Cron {
 
 		wp_schedule_event( $timestamp, $recurrence, self::HOOK );
 
-		ASAW_Logger::info( 'Cron scheduled.', array(
+		SEOAPW_Logger::info( 'Cron scheduled.', array(
 			'recurrence' => $recurrence,
 			'first_run'  => gmdate( 'Y-m-d H:i:s', $timestamp ),
 		) );
@@ -108,7 +108,7 @@ class ASAW_Cron {
 	private function get_recurrence( array $options ) {
 		switch ( $options['schedule_frequency'] ?? 'daily' ) {
 			case 'weekly': return 'weekly';
-			case 'custom': return 'asaw_custom';
+			case 'custom': return 'seoapw_custom';
 			default:       return 'daily';
 		}
 	}

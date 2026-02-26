@@ -39,12 +39,14 @@ Every generated article includes:
 
 == Installation ==
 
-1. Upload the `ai-scheduled-article-writer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the **Plugins** screen in WordPress.
-3. Navigate to **SEOAutowrite** in the left-hand admin menu.
-4. Enter your Ollama endpoint URL and API key.
-5. Select the model, choose your target categories, and configure the schedule.
-6. Enable the plugin and click **Save Settings**.
+1. Download the plugin zip file.
+2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Choose the downloaded zip file and click **Install Now**.
+4. Activate the plugin through the **Plugins** screen in WordPress.
+5. Navigate to **SEOAutowrite** in the left-hand admin menu.
+6. Enter your Ollama endpoint URL and API key.
+7. Select the model, choose your target categories, and configure the schedule.
+8. Enable the plugin and click **Save Settings**.
 
 == Frequently Asked Questions ==
 

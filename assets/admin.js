@@ -1,42 +1,42 @@
-/* global asawAdmin, jQuery */
+/* global seoapwAdmin, jQuery */
 ( function ( $ ) {
 	'use strict';
 
 	$( function () {
 
 		// ── Schedule frequency toggle ────────────────────────────────
-		$( '#asaw-schedule-frequency' ).on( 'change', function () {
+		$( '#seoapw-schedule-frequency' ).on( 'change', function () {
 			if ( 'custom' === $( this ).val() ) {
-				$( '#asaw-custom-minutes-row' ).show();
+				$( '#seoapw-custom-minutes-row' ).show();
 			} else {
-				$( '#asaw-custom-minutes-row' ).hide();
+				$( '#seoapw-custom-minutes-row' ).hide();
 			}
 		} );
 
 		// ── Image mode toggle ────────────────────────────────────────
-		$( '#asaw-image-mode' ).on( 'change', function () {
+		$( '#seoapw-image-mode' ).on( 'change', function () {
 			if ( 'generate' === $( this ).val() ) {
-				$( '.asaw-image-generate-row' ).show();
+				$( '.seoapw-image-generate-row' ).show();
 			} else {
-				$( '.asaw-image-generate-row' ).hide();
+				$( '.seoapw-image-generate-row' ).hide();
 			}
 		} );
 
 		// ── Fetch Available Models ───────────────────────────────────
-		$( '#asaw-fetch-models' ).on( 'click', function () {
+		$( '#seoapw-fetch-models' ).on( 'click', function () {
 			var $btn    = $( this );
-			var $status = $( '#asaw-fetch-models-status' );
-			var $list   = $( '#asaw-models-list' );
+			var $status = $( '#seoapw-fetch-models-status' );
+			var $list   = $( '#seoapw-models-list' );
 
 			$btn.prop( 'disabled', true );
-			$status.css( 'color', '' ).text( asawAdmin.strings.fetchingModels );
+			$status.css( 'color', '' ).text( seoapwAdmin.strings.fetchingModels );
 			$list.hide().empty();
 
 			$.post(
-				asawAdmin.ajaxUrl,
+				seoapwAdmin.ajaxUrl,
 				{
-					action: 'asaw_fetch_models',
-					nonce:  asawAdmin.fetchModelsNonce,
+					action: 'seoapw_fetch_models',
+					nonce:  seoapwAdmin.fetchModelsNonce,
 				},
 				function ( response ) {
 					$btn.prop( 'disabled', false );
@@ -45,7 +45,7 @@
 						$status.css( 'color', '#b91c1c' ).text(
 							( response.data && response.data.message )
 								? response.data.message
-								: asawAdmin.strings.noModels
+								: seoapwAdmin.strings.noModels
 						);
 						return;
 					}
@@ -55,9 +55,9 @@
 					var html = '<ul style="margin:0;list-style:disc;padding-left:1.4em;">';
 					$.each( response.data.models, function ( i, model ) {
 						html += '<li>' + $( '<span>' ).text( model ).html() +
-							' <a href="#" class="asaw-use-model" data-model="' +
+							' <a href="#" class="seoapw-use-model" data-model="' +
 							$( '<span>' ).text( model ).html() + '">[' +
-							asawAdmin.strings.useModel + ']</a></li>';
+							seoapwAdmin.strings.useModel + ']</a></li>';
 					} );
 					html += '</ul>';
 
@@ -65,33 +65,33 @@
 				}
 			).fail( function () {
 				$btn.prop( 'disabled', false );
-				$status.css( 'color', '#b91c1c' ).text( asawAdmin.strings.error );
+				$status.css( 'color', '#b91c1c' ).text( seoapwAdmin.strings.error );
 			} );
 		} );
 
 		// Click "Use" next to a model name to populate the model field.
-		$( document ).on( 'click', '.asaw-use-model', function ( e ) {
+		$( document ).on( 'click', '.seoapw-use-model', function ( e ) {
 			e.preventDefault();
-			$( '#asaw-ollama-model' ).val( $( this ).data( 'model' ) );
+			$( '#seoapw-ollama-model' ).val( $( this ).data( 'model' ) );
 		} );
 
 		// ── Run Now button ───────────────────────────────────────────
-		$( '#asaw-run-now' ).on( 'click', function ( e ) {
+		$( '#seoapw-run-now' ).on( 'click', function ( e ) {
 			e.preventDefault();
 
 			var $btn       = $( this );
-			var $status    = $( '#asaw-run-now-status' );
-			var runLabel   = '&#9654; ' + ( asawAdmin.strings.running || 'Running\u2026' );
+			var $status    = $( '#seoapw-run-now-status' );
+			var runLabel   = '&#9654; ' + ( seoapwAdmin.strings.running || 'Running\u2026' );
 			var resetLabel = '&#9654; Run Now';
 
 			$btn.prop( 'disabled', true ).html( runLabel );
 			$status.css( 'color', '' ).text( '' );
 
 			$.post(
-				asawAdmin.ajaxUrl,
+				seoapwAdmin.ajaxUrl,
 				{
-					action: 'asaw_run_now',
-					nonce:  asawAdmin.runNonce,
+					action: 'seoapw_run_now',
+					nonce:  seoapwAdmin.runNonce,
 				},
 				function ( response ) {
 					$btn.prop( 'disabled', false ).html( resetLabel );
@@ -100,13 +100,13 @@
 						$status.css( 'color', '#16a34a' ).text(
 							( response.data && response.data.message )
 								? response.data.message
-								: asawAdmin.strings.done
+								: seoapwAdmin.strings.done
 						);
 					} else {
 						$status.css( 'color', '#b91c1c' ).text(
 							( response.data && response.data.message )
 								? response.data.message
-								: asawAdmin.strings.error
+								: seoapwAdmin.strings.error
 						);
 					}
 
@@ -117,7 +117,7 @@
 				}
 			).fail( function () {
 				$btn.prop( 'disabled', false ).html( resetLabel );
-				$status.css( 'color', '#b91c1c' ).text( asawAdmin.strings.error );
+				$status.css( 'color', '#b91c1c' ).text( seoapwAdmin.strings.error );
 			} );
 		} );
 

@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-interface ASAW_Provider_Interface {
+interface SEOAPW_Provider_Interface {
 
 	/**
 	 * Generate a full article.

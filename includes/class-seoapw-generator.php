@@ -7,9 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class ASAW_Generator {
+class SEOAPW_Generator {
 
-	const LOCK_TRANSIENT = 'asaw_generation_lock';
+	const LOCK_TRANSIENT = 'seoapw_generation_lock';
 	const LOCK_DURATION  = 600; // 10 minutes in seconds.
 
 	/** @var array */
@@ -32,22 +32,32 @@ class ASAW_Generator {
 	public function run() {
 		// Step 1 — Guard checks.
 		if ( empty( $this->options['enabled'] ) ) {
-			ASAW_Logger::info( 'Generator skipped: plugin is not enabled.' );
+			SEOAPW_Logger::info( 'Generator skipped: plugin is not enabled.' );
 			return;
 		}
 
-		if (
-			empty( $this->options['ollama_api_key'] ) ||
-			empty( $this->options['ollama_endpoint'] ) ||
-			empty( $this->options['ollama_model'] )
-		) {
-			ASAW_Logger::error( 'Generator aborted: Ollama API key, endpoint, or model is not configured.' );
-			return;
+		// Pro users with sufficient balance do not need Ollama configured — the
+		// remote server handles generation. Ollama config is only required when
+		// the free tier (or Pro fallback) will actually call the local API.
+		$is_pro_ready = function_exists( 'seoapw_is_pro' )
+			&& seoapw_is_pro()
+			&& function_exists( 'seoapw_has_sufficient_balance' )
+			&& seoapw_has_sufficient_balance();
+
+		if ( ! $is_pro_ready ) {
+			if (
+				empty( $this->options['ollama_api_key'] ) ||
+				empty( $this->options['ollama_endpoint'] ) ||
+				empty( $this->options['ollama_model'] )
+			) {
+				SEOAPW_Logger::error( 'Generator aborted: Ollama API key, endpoint, or model is not configured.' );
+				return;
+			}
 		}
 
 		// Step 2 — Acquire concurrency lock.
 		if ( get_transient( self::LOCK_TRANSIENT ) ) {
-			ASAW_Logger::info( 'Generator skipped: another generation run is already in progress.' );
+			SEOAPW_Logger::info( 'Generator skipped: another generation run is already in progress.' );
 			return;
 		}
 
@@ -56,7 +66,7 @@ class ASAW_Generator {
 		try {
 			$this->generate();
 		} catch ( Exception $e ) {
-			ASAW_Logger::error( 'Unexpected exception during generation.', array( 'message' => $e->getMessage() ) );
+			SEOAPW_Logger::error( 'Unexpected exception during generation.', array( 'message' => $e->getMessage() ) );
 		}
 
 		// Step 14 — Release lock.
@@ -74,7 +84,7 @@ class ASAW_Generator {
 		$categories = isset( $options['categories'] ) ? array_filter( array_map( 'intval', (array) $options['categories'] ) ) : array();
 
 		if ( empty( $categories ) ) {
-			ASAW_Logger::error( 'Generator aborted: no categories configured.' );
+			SEOAPW_Logger::error( 'Generator aborted: no categories configured.' );
 			return;
 		}
 
@@ -83,7 +93,7 @@ class ASAW_Generator {
 		$cat_id     = $this->choose_category( $categories, $strategy );
 
 		if ( ! $cat_id ) {
-			ASAW_Logger::error( 'Generator aborted: could not select a valid category.' );
+			SEOAPW_Logger::error( 'Generator aborted: could not select a valid category.' );
 			return;
 		}
 
@@ -91,32 +101,57 @@ class ASAW_Generator {
 		$category = get_term( $cat_id, 'category' );
 
 		if ( is_wp_error( $category ) || ! $category ) {
-			ASAW_Logger::error( "Generator aborted: category ID {$cat_id} not found." );
+			SEOAPW_Logger::error( "Generator aborted: category ID {$cat_id} not found." );
 			return;
 		}
 
 		$cat_name = $category->name;
 		$cat_desc = ! empty( $category->description ) ? $category->description : "Articles related to {$cat_name}.";
 
-		ASAW_Logger::info( "Starting generation for category: {$cat_name} (ID: {$cat_id})." );
+		SEOAPW_Logger::info( "Starting generation for category: {$cat_name} (ID: {$cat_id})." );
 
 		// Fetch recent titles to avoid duplicate content.
 		$recent_titles = $this->get_recent_titles( $cat_id );
 
 		if ( ! empty( $recent_titles ) ) {
-			ASAW_Logger::info( 'Recent titles fetched for deduplication.', array( 'titles' => $recent_titles ) );
+			SEOAPW_Logger::info( 'Recent titles fetched for deduplication.', array( 'titles' => $recent_titles ) );
 		}
 
-		// Steps 5–8 — Build prompt, call Ollama, parse, validate (all inside provider).
-		$provider = new ASAW_Ollama_Provider( $options );
-		$article  = $provider->generate_article( array(
-			'category_name'        => $cat_name,
-			'category_description' => $cat_desc,
-			'recent_titles'        => $recent_titles,
-		) );
+		// Pro generation check — skip Ollama entirely when Pro is active with
+		// sufficient balance. Falls back to Ollama silently on any failure.
+		$article              = null;
+		$is_pro_article       = false;
+		$pro_featured_img_url = null;
+
+		if (
+			function_exists( 'seoapw_is_pro' ) && seoapw_is_pro() &&
+			function_exists( 'seoapw_has_sufficient_balance' ) && seoapw_has_sufficient_balance()
+		) {
+			SEOAPW_Logger::info( 'Pro license detected — attempting Pro generation.' );
+			$pro_result = seoapw_generate_pro( $options, $category );
+
+			if ( is_wp_error( $pro_result ) ) {
+				SEOAPW_Logger::info( 'Pro generation failed, falling back to Ollama: ' . $pro_result->get_error_message() );
+			} else {
+				$article              = $pro_result['article'];
+				$pro_featured_img_url = $pro_result['featured_image_url'] ?? null;
+				$is_pro_article       = true;
+				SEOAPW_Logger::info( 'Pro generation succeeded.' );
+			}
+		}
+
+		if ( null === $article ) {
+			// Steps 5–8 — Build prompt, call Ollama, parse, validate (all inside provider).
+			$provider = new SEOAPW_Ollama_Provider( $options );
+			$article  = $provider->generate_article( array(
+				'category_name'        => $cat_name,
+				'category_description' => $cat_desc,
+				'recent_titles'        => $recent_titles,
+			) );
+		}
 
 		if ( is_wp_error( $article ) ) {
-			ASAW_Logger::error( 'Article generation failed: ' . $article->get_error_message() );
+			SEOAPW_Logger::error( 'Article generation failed: ' . $article->get_error_message() );
 			if ( 'draft' === ( $options['on_invalid_json'] ?? 'abort' ) ) {
 				$this->create_minimal_draft( $cat_id, $article->get_error_message() );
 			}
@@ -127,32 +162,53 @@ class ASAW_Generator {
 		$post_id = $this->create_post( $article, $cat_id );
 
 		if ( is_wp_error( $post_id ) ) {
-			ASAW_Logger::error( 'wp_insert_post failed: ' . $post_id->get_error_message() );
+			SEOAPW_Logger::error( 'wp_insert_post failed: ' . $post_id->get_error_message() );
 			return;
 		}
 
-		ASAW_Logger::info( "Post created. ID: {$post_id}." );
+		SEOAPW_Logger::info( "Post created. ID: {$post_id}." );
 
 		// Step 10 — Store internal link suggestions.
 		if ( ! empty( $options['insert_internal_links'] ) && ! empty( $article['internal_link_suggestions'] ) ) {
-			update_post_meta( $post_id, '_asaw_internal_link_suggestions', wp_json_encode( $article['internal_link_suggestions'] ) );
+			update_post_meta( $post_id, '_seoapw_internal_link_suggestions', wp_json_encode( $article['internal_link_suggestions'] ) );
+		}
+
+		// Pro-specific post meta (generated_at timestamp, balance after, Pro internal links).
+		if ( $is_pro_article && function_exists( 'seoapw_save_pro_post_meta' ) ) {
+			seoapw_save_pro_post_meta( $post_id, $article, $options );
 		}
 
 		// Step 11 — Featured image.
-		$image_provider = $this->resolve_image_provider();
-		$image_handler  = new ASAW_Image( $image_provider, $options );
-		$image_result   = $image_handler->handle( $post_id, $article['featured_image_prompt'] ?? '' );
+		if ( $is_pro_article && ! empty( $pro_featured_img_url ) ) {
+			// Server already generated the image — sideload it directly.
+			require_once ABSPATH . 'wp-admin/includes/media.php';
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			require_once ABSPATH . 'wp-admin/includes/image.php';
 
-		if ( is_wp_error( $image_result ) ) {
-			// Non-fatal: log and continue.
-			ASAW_Logger::error( 'Image handling error (non-fatal): ' . $image_result->get_error_message() );
+			$attachment_id = media_sideload_image( $pro_featured_img_url, $post_id, null, 'id' );
+
+			if ( is_wp_error( $attachment_id ) ) {
+				SEOAPW_Logger::error( 'Pro image sideload failed (non-fatal): ' . $attachment_id->get_error_message() );
+			} else {
+				set_post_thumbnail( $post_id, $attachment_id );
+				SEOAPW_Logger::info( "Pro featured image sideloaded for post {$post_id} (attachment ID: {$attachment_id})." );
+			}
+		} else {
+			// Free tier or Pro without server-side image — use local image provider.
+			$image_provider = $this->resolve_image_provider();
+			$image_handler  = new SEOAPW_Image( $image_provider, $options );
+			$image_result   = $image_handler->handle( $post_id, $article['featured_image_prompt'] ?? '' );
+
+			if ( is_wp_error( $image_result ) ) {
+				SEOAPW_Logger::error( 'Image handling error (non-fatal): ' . $image_result->get_error_message() );
+			}
 		}
 
 		// Step 12 — Store post meta.
 		$this->store_post_meta( $post_id, $article, $cat_id );
 
 		// Step 13 — Log summary.
-		ASAW_Logger::info( 'Article generation complete.', array(
+		SEOAPW_Logger::info( 'Article generation complete.', array(
 			'post_id'  => $post_id,
 			'title'    => $article['title'] ?? '',
 			'category' => $cat_name,
@@ -176,11 +232,11 @@ class ASAW_Generator {
 		}
 
 		// Rotate: cycle through categories in order using stored category ID.
-		$last_cat_id  = intval( get_option( 'asaw_last_category_id', 0 ) );
+		$last_cat_id  = intval( get_option( 'seoapw_last_category_id', 0 ) );
 		$last_index   = array_search( $last_cat_id, $categories, true );
 		$next_index   = ( false === $last_index ) ? 0 : ( $last_index + 1 ) % count( $categories );
 		$next_cat_id  = $categories[ $next_index ];
-		update_option( 'asaw_last_category_id', $next_cat_id, false );
+		update_option( 'seoapw_last_category_id', $next_cat_id, false );
 
 		return $next_cat_id;
 	}
@@ -272,26 +328,26 @@ class ASAW_Generator {
 	}
 
 	/**
-	 * Save all ASAW-specific post meta.
+	 * Save all SEOAPW-specific post meta.
 	 *
 	 * @param int   $post_id
 	 * @param array $article
 	 * @param int   $cat_id
 	 */
 	private function store_post_meta( $post_id, array $article, $cat_id ) {
-		update_post_meta( $post_id, '_asaw_category_id',         intval( $cat_id ) );
-		update_post_meta( $post_id, '_asaw_keywords',            wp_json_encode( $article['keywords']            ?? array() ) );
-		update_post_meta( $post_id, '_asaw_meta_description',    sanitize_text_field( $article['meta_description'] ?? '' ) );
-		update_post_meta( $post_id, '_asaw_meta_title',          sanitize_text_field( $article['meta_title']       ?? '' ) );
-		update_post_meta( $post_id, '_asaw_primary_keyword',     sanitize_text_field( $article['primary_keyword']  ?? '' ) );
-		update_post_meta( $post_id, '_asaw_semantic_keywords',   wp_json_encode( $article['semantic_keywords']   ?? array() ) );
-		update_post_meta( $post_id, '_asaw_backlink_brief',      wp_json_encode( $article['backlink_brief']      ?? array() ) );
-		update_post_meta( $post_id, '_asaw_generated_at',        current_time( 'mysql' ) );
-		update_post_meta( $post_id, '_asaw_generation_prompt_hash',
+		update_post_meta( $post_id, '_seoapw_category_id',         intval( $cat_id ) );
+		update_post_meta( $post_id, '_seoapw_keywords',            wp_json_encode( $article['keywords']            ?? array() ) );
+		update_post_meta( $post_id, '_seoapw_meta_description',    sanitize_text_field( $article['meta_description'] ?? '' ) );
+		update_post_meta( $post_id, '_seoapw_meta_title',          sanitize_text_field( $article['meta_title']       ?? '' ) );
+		update_post_meta( $post_id, '_seoapw_primary_keyword',     sanitize_text_field( $article['primary_keyword']  ?? '' ) );
+		update_post_meta( $post_id, '_seoapw_semantic_keywords',   wp_json_encode( $article['semantic_keywords']   ?? array() ) );
+		update_post_meta( $post_id, '_seoapw_backlink_brief',      wp_json_encode( $article['backlink_brief']      ?? array() ) );
+		update_post_meta( $post_id, '_seoapw_generated_at',        current_time( 'mysql' ) );
+		update_post_meta( $post_id, '_seoapw_generation_prompt_hash',
 			md5( ( $article['title'] ?? '' ) . ( $article['meta_description'] ?? '' ) ) );
 
 		if ( ! empty( $article['external_link_suggestions'] ) ) {
-			update_post_meta( $post_id, '_asaw_external_link_suggestions', wp_json_encode( $article['external_link_suggestions'] ) );
+			update_post_meta( $post_id, '_seoapw_external_link_suggestions', wp_json_encode( $article['external_link_suggestions'] ) );
 		}
 
 		// Best-effort: populate Yoast SEO and RankMath fields.
@@ -318,16 +374,16 @@ class ASAW_Generator {
 	/**
 	 * Resolve the correct image provider instance based on settings.
 	 *
-	 * @return ASAW_Image_Provider_Interface
+	 * @return SEOAPW_Image_Provider_Interface
 	 */
 	private function resolve_image_provider() {
 		$provider_name = $this->options['image_provider'] ?? 'none';
 
 		switch ( $provider_name ) {
 			case 'openai':
-				return new ASAW_OpenAI_Image_Provider();
+				return new SEOAPW_OpenAI_Image_Provider();
 			default:
-				return new ASAW_None_Image_Provider();
+				return new SEOAPW_None_Image_Provider();
 		}
 	}
 
@@ -361,14 +417,14 @@ class ASAW_Generator {
 	private function create_minimal_draft( $cat_id, $error_message ) {
 		$post_id = wp_insert_post( array(
 			'post_title'    => __( 'Auto-generated Article (Generation Failed)', 'seoautowrite-pro' ),
-			'post_content'  => '<!-- ASAW generation error: ' . esc_html( $error_message ) . ' -->',
+			'post_content'  => '<!-- SEOAPW generation error: ' . esc_html( $error_message ) . ' -->',
 			'post_status'   => 'draft',
 			'post_author'   => intval( $this->options['author_id'] ?? 1 ),
 			'post_category' => array( intval( $cat_id ) ),
 		) );
 
 		if ( $post_id && ! is_wp_error( $post_id ) ) {
-			ASAW_Logger::info( "Created minimal draft post (ID: {$post_id}) after generation failure." );
+			SEOAPW_Logger::info( "Created minimal draft post (ID: {$post_id}) after generation failure." );
 		}
 	}
 }

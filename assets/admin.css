@@ -3,14 +3,14 @@
    ========================================================= */
 
 /* Wrapper ------------------------------------------------- */
-.asaw-wrap {
+.seoapw-wrap {
 	max-width: 860px;
 	margin: 20px 0 40px;
 	font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 /* Header -------------------------------------------------- */
-.asaw-header {
+.seoapw-header {
 	display: flex;
 	align-items: center;
 	gap: 14px;
@@ -19,14 +19,14 @@
 	margin-bottom: 28px;
 }
 
-.asaw-header-icon {
+.seoapw-header-icon {
 	width: 40px;
 	height: 40px;
 	border-radius: 10px;
 	object-fit: contain;
 }
 
-.asaw-header h1 {
+.seoapw-header h1 {
 	margin: 0;
 	font-size: 26px;
 	font-weight: 700;
@@ -36,7 +36,7 @@
 }
 
 /* Card sections ------------------------------------------- */
-.asaw-card {
+.seoapw-card {
 	background: #ffffff;
 	border: 1px solid #e2e8f0;
 	border-radius: 12px;
@@ -45,7 +45,7 @@
 	margin-bottom: 20px;
 }
 
-.asaw-card-title {
+.seoapw-card-title {
 	font-size: 15px !important;
 	font-weight: 600 !important;
 	color: #0f172a !important;
@@ -55,7 +55,7 @@
 }
 
 /* Form rows ----------------------------------------------- */
-.asaw-row {
+.seoapw-row {
 	display: grid;
 	grid-template-columns: 190px 1fr;
 	gap: 12px;
@@ -64,20 +64,20 @@
 	border-bottom: 1px solid #f1f5f9;
 }
 
-.asaw-row:last-child {
+.seoapw-row:last-child {
 	border-bottom: 0;
 	padding-bottom: 0;
 }
 
-.asaw-row:first-child {
+.seoapw-row:first-child {
 	padding-top: 0;
 }
 
-.asaw-row.is-hidden {
+.seoapw-row.is-hidden {
 	display: none;
 }
 
-.asaw-label {
+.seoapw-label {
 	font-size: 13px;
 	font-weight: 500;
 	color: #475569;
@@ -85,14 +85,14 @@
 	line-height: 1.4;
 }
 
-.asaw-control {
+.seoapw-control {
 	flex: 1;
 	min-width: 0;
 }
 
 /* Inputs -------------------------------------------------- */
-.asaw-input,
-.asaw-select {
+.seoapw-input,
+.seoapw-select {
 	display: block;
 	width: 100%;
 	max-width: 460px;
@@ -109,23 +109,23 @@
 	transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.asaw-input:focus,
-.asaw-select:focus {
+.seoapw-input:focus,
+.seoapw-select:focus {
 	outline: none;
 	border-color: #2563eb;
 	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
-.asaw-input.asaw-mono {
+.seoapw-input.seoapw-mono {
 	font-family: 'Courier New', Courier, monospace;
 	font-size: 12px;
 }
 
-.asaw-input.asaw-small {
+.seoapw-input.seoapw-small {
 	max-width: 110px;
 }
 
-.asaw-textarea {
+.seoapw-textarea {
 	display: block;
 	width: 100%;
 	max-width: 100%;
@@ -143,26 +143,26 @@
 	transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.asaw-textarea:focus {
+.seoapw-textarea:focus {
 	outline: none;
 	border-color: #2563eb;
 	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
-.asaw-select[multiple] {
+.seoapw-select[multiple] {
 	height: auto;
 	min-height: 130px;
 }
 
 /* Description text ---------------------------------------- */
-.asaw-desc {
+.seoapw-desc {
 	font-size: 12px;
 	color: #64748b;
 	margin: 6px 0 0;
 	line-height: 1.5;
 }
 
-.asaw-desc code {
+.seoapw-desc code {
 	background: #f1f5f9;
 	padding: 1px 5px;
 	border-radius: 4px;
@@ -172,7 +172,7 @@
 }
 
 /* Checkbox label ------------------------------------------ */
-.asaw-check-label {
+.seoapw-check-label {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
@@ -183,7 +183,7 @@
 	font-family: inherit;
 }
 
-.asaw-check-label input[type="checkbox"] {
+.seoapw-check-label input[type="checkbox"] {
 	width: 15px;
 	height: 15px;
 	border-radius: 4px;
@@ -193,14 +193,14 @@
 }
 
 /* Two-column field groups --------------------------------- */
-.asaw-grid-2 {
+.seoapw-grid-2 {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 14px;
 	max-width: 460px;
 }
 
-.asaw-field-group label {
+.seoapw-field-group label {
 	display: block;
 	font-size: 11px;
 	font-weight: 600;
@@ -210,31 +210,31 @@
 	letter-spacing: 0.04em;
 }
 
-.asaw-field-group .asaw-input,
-.asaw-field-group .asaw-select {
+.seoapw-field-group .seoapw-input,
+.seoapw-field-group .seoapw-select {
 	max-width: 100%;
 }
 
 /* Model fetch inline -------------------------------------- */
-.asaw-model-row {
+.seoapw-model-row {
 	display: flex;
 	gap: 8px;
 	max-width: 460px;
 }
 
-.asaw-model-row .asaw-input {
+.seoapw-model-row .seoapw-input {
 	flex: 1;
 	max-width: 100%;
 }
 
-.asaw-inline-actions {
+.seoapw-inline-actions {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 	margin-top: 8px;
 }
 
-.asaw-btn {
+.seoapw-btn {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -252,23 +252,23 @@
 	white-space: nowrap;
 }
 
-.asaw-btn:hover {
+.seoapw-btn:hover {
 	background: #f8fafc;
 	border-color: #94a3b8;
 }
 
-.asaw-btn:disabled {
+.seoapw-btn:disabled {
 	opacity: 0.5;
 	cursor: not-allowed;
 }
 
-.asaw-btn-status {
+.seoapw-btn-status {
 	font-size: 12px;
 	font-weight: 500;
 }
 
 /* Models list --------------------------------------------- */
-.asaw-models-list {
+.seoapw-models-list {
 	display: none;
 	margin-top: 8px;
 	padding: 10px 14px;
@@ -279,27 +279,27 @@
 	max-width: 460px;
 }
 
-.asaw-models-list ul {
+.seoapw-models-list ul {
 	margin: 0;
 	padding-left: 1.3em;
 }
 
-.asaw-models-list a {
+.seoapw-models-list a {
 	color: #2563eb;
 	text-decoration: none;
 }
 
-.asaw-models-list a:hover {
+.seoapw-models-list a:hover {
 	text-decoration: underline;
 }
 
 /* Save button --------------------------------------------- */
-.asaw-submit-row {
+.seoapw-submit-row {
 	padding-top: 8px;
 	margin-bottom: 32px;
 }
 
-.asaw-save-btn {
+.seoapw-save-btn {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
@@ -315,18 +315,18 @@
 	transition: background 0.15s, box-shadow 0.15s;
 }
 
-.asaw-save-btn:hover {
+.seoapw-save-btn:hover {
 	background: #1d4ed8;
 	border-color: #1d4ed8;
 }
 
-.asaw-save-btn:focus {
+.seoapw-save-btn:focus {
 	outline: none;
 	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.22);
 }
 
 /* Logs action panel --------------------------------------- */
-.asaw-action-panel {
+.seoapw-action-panel {
 	background: #ffffff;
 	border: 1px solid #e2e8f0;
 	border-radius: 12px;
@@ -335,14 +335,14 @@
 	margin-bottom: 24px;
 }
 
-.asaw-action-panel-header {
+.seoapw-action-panel-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 16px;
 }
 
-.asaw-action-panel-header h2 {
+.seoapw-action-panel-header h2 {
 	font-size: 17px !important;
 	font-weight: 700 !important;
 	color: #0f172a !important;
@@ -351,13 +351,13 @@
 	border: 0 !important;
 }
 
-.asaw-run-area {
+.seoapw-run-area {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 }
 
-#asaw-run-now {
+#seoapw-run-now {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -373,28 +373,28 @@
 	transition: background 0.15s;
 }
 
-#asaw-run-now:hover {
+#seoapw-run-now:hover {
 	background: #1e293b;
 }
 
-#asaw-run-now:disabled {
+#seoapw-run-now:disabled {
 	opacity: 0.6;
 	cursor: not-allowed;
 }
 
-#asaw-run-now-status {
+#seoapw-run-now-status {
 	font-size: 12px;
 	font-weight: 500;
 }
 
 /* Logs table ---------------------------------------------- */
-.asaw-logs-wrap {
+.seoapw-logs-wrap {
 	border: 1px solid #e2e8f0;
 	border-radius: 8px;
 	overflow: hidden;
 }
 
-.asaw-logs-header {
+.seoapw-logs-header {
 	background: #f8fafc;
 	border-bottom: 1px solid #e2e8f0;
 	padding: 10px 16px;
@@ -407,7 +407,7 @@
 	text-transform: uppercase;
 }
 
-.asaw-log-row {
+.seoapw-log-row {
 	display: grid;
 	grid-template-columns: 155px 80px 1fr;
 	padding: 11px 16px;
@@ -417,22 +417,22 @@
 	transition: background 0.1s;
 }
 
-.asaw-log-row:last-child {
+.seoapw-log-row:last-child {
 	border-bottom: 0;
 }
 
-.asaw-log-row:hover {
+.seoapw-log-row:hover {
 	background: #f8fafc;
 }
 
-.asaw-log-time {
+.seoapw-log-time {
 	font-size: 11px;
 	color: #94a3b8;
 	font-family: 'Courier New', Courier, monospace;
 	padding-top: 2px;
 }
 
-.asaw-level-badge {
+.seoapw-level-badge {
 	display: inline-block;
 	padding: 2px 7px;
 	border-radius: 4px;
@@ -441,17 +441,17 @@
 	letter-spacing: 0.05em;
 }
 
-.asaw-level-info  { background: #dbeafe; color: #1d4ed8; }
-.asaw-level-error { background: #fee2e2; color: #b91c1c; }
-.asaw-level-debug { background: #f1f5f9; color: #475569; }
+.seoapw-level-info  { background: #dbeafe; color: #1d4ed8; }
+.seoapw-level-error { background: #fee2e2; color: #b91c1c; }
+.seoapw-level-debug { background: #f1f5f9; color: #475569; }
 
-.asaw-log-msg {
+.seoapw-log-msg {
 	color: #334155;
 	font-weight: 500;
 	word-break: break-word;
 }
 
-.asaw-context {
+.seoapw-context {
 	margin: 6px 0 0;
 	padding: 7px 10px;
 	font-size: 11px;
@@ -465,7 +465,7 @@
 	font-family: 'Courier New', Courier, monospace;
 }
 
-.asaw-no-logs {
+.seoapw-no-logs {
 	padding: 24px 16px;
 	color: #94a3b8;
 	font-size: 13px;
@@ -474,47 +474,47 @@
 
 /* Responsive ---------------------------------------------- */
 @media (max-width: 900px) {
-	.asaw-wrap {
+	.seoapw-wrap {
 		max-width: 100%;
 	}
 }
 
 @media (max-width: 782px) {
-	.asaw-row {
+	.seoapw-row {
 		grid-template-columns: 1fr;
 		gap: 4px;
 	}
 
-	.asaw-label {
+	.seoapw-label {
 		padding-top: 0;
 		font-weight: 600;
 	}
 
-	.asaw-grid-2 {
+	.seoapw-grid-2 {
 		grid-template-columns: 1fr;
 		max-width: 100%;
 	}
 
-	.asaw-input,
-	.asaw-select {
+	.seoapw-input,
+	.seoapw-select {
 		max-width: 100%;
 	}
 
-	.asaw-model-row {
+	.seoapw-model-row {
 		max-width: 100%;
 	}
 
-	.asaw-logs-header,
-	.asaw-log-row {
+	.seoapw-logs-header,
+	.seoapw-log-row {
 		grid-template-columns: 1fr;
 		gap: 4px;
 	}
 
-	.asaw-logs-header span:not(:first-child) {
+	.seoapw-logs-header span:not(:first-child) {
 		display: none;
 	}
 
-	.asaw-action-panel-header {
+	.seoapw-action-panel-header {
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 12px;
