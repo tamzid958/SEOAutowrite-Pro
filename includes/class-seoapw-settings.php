@@ -337,6 +337,15 @@ class SEOAPW_Settings {
 								name="<?php echo esc_attr( $opt_name ); ?>[ollama_api_key]"
 								value="<?php echo esc_attr( $opts['ollama_api_key'] ); ?>"
 								autocomplete="new-password">
+							<p class="seoapw-hint">
+								<?php
+								printf(
+									/* translators: %s: link to Ollama API keys page */
+									esc_html__( 'Get your API key from %s.', 'seoautowrite-pro' ),
+									'<a href="https://ollama.com/settings/keys" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Ollama Settings', 'seoautowrite-pro' ) . '</a>'
+								);
+								?>
+							</p>
 						</div>
 					</div>
 
